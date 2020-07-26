@@ -30,14 +30,14 @@ def calculate_grid_world_optimal_action_values(env):
 
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
-                values = []
                 # 주어진 상태에서 가능한 모든 행동들의 결과로 다음 상태 및 보상 정보 갱신
                 for action in env.action_space.ACTIONS:
                     (next_i, next_j), reward, prob = env.get_state_action_probability(state=(i, j), action=action)
 
                     # Bellman Optimality Equation, 벨만 최적 방정식 적용
                     # 새로운 행동 가치 갱신
-                    new_action_value_function[i, j, action] = prob * (reward + DISCOUNT_RATE * np.max(action_value_function[next_i, next_j, :]))
+                    new_action_value_function[i, j, action] = \
+                        prob * (reward + DISCOUNT_RATE * np.max(action_value_function[next_i, next_j, :]))
 
         # 행동 가치 함수 수렴 여부 판단
         if np.sum(np.abs(new_action_value_function - action_value_function)) < 1e-4:
@@ -52,8 +52,9 @@ def calculate_optimal_policy(optimal_action_value):
     optimal_policy = dict()
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
-            m = np.amax(optimal_action_value[i, j, :])
-            indices = np.nonzero(optimal_action_value[i, j, :] == m)[0]
+            max_ = np.max(optimal_action_value[i, j, :])
+            arg_max_ = np.nonzero(optimal_action_value[i, j, :] == max_)
+            indices = arg_max_[0]
             optimal_policy[(i, j)] = indices
 
     return optimal_policy
