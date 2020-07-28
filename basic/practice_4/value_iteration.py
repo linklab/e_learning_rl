@@ -1,23 +1,20 @@
 import numpy as np
 from basic.practice_1.gridworld import GridWorld
-from utils.util import softmax, draw_grid_world_action_values_image, draw_grid_world_policy_image
+from utils.util import softmax, draw_grid_world_action_values_image, draw_grid_world_policy_image, \
+    draw_grid_world_state_values_image
 
 GRID_HEIGHT = 4
 GRID_WIDTH = 4
 TERMINAL_STATES = [(0, 0), (GRID_HEIGHT-1, GRID_WIDTH-1)]
 
-DISCOUNT_RATE = 1.0
+DISCOUNT_RATE = 0.9
 THETA_1 = 0.0001
-THETA_2 = 0.0001
-MAX_EPISODES = 5000
 
 
 # 정책 반복 클래스
 class ValueIteration:
     def __init__(self, env):
         self.env = env
-
-        self.max_iteration = MAX_EPISODES
 
         self.terminal_states = [(0, 0), (4, 4)]
 
@@ -67,8 +64,8 @@ class ValueIteration:
             iter_num += 1
 
             # 갱신되는 값이 THETA_1(=0.0001)을 기준으로 수렴하는지 판정
-            max_delta_value = abs(old_state_values - state_values).max()
-            if max_delta_value < THETA_1:
+            delta_value = np.sum(np.absolute(old_state_values - state_values))
+            if delta_value < THETA_1:
                 break
 
         self.state_values = state_values
@@ -94,13 +91,15 @@ class ValueIteration:
 
     # 정책 반복 함수
     def start_iteration(self):
-        iter_num = 0
+        print("[[[ 가치 반복 시작! ]]]")
 
         iter_num_policy_evaluation = self.value_evaluation()
-        print("*** 가치 평가 [수렴까지 누적 반복 횟수: {0}] ***".format(iter_num_policy_evaluation))
+        print("*** 가치 평가 [수렴까지 반복 횟수: {0}] ***".format(iter_num_policy_evaluation))
 
+        print()
         self.policy_setup()
         print("*** 정책 셋업 완료 ***")
+        print()
 
         return self.state_values, self.policy
 
@@ -144,6 +143,14 @@ if __name__ == '__main__':
 
     VI = ValueIteration(env)
     VI.start_iteration()
+
+    print(VI.state_values)
+
+    draw_grid_world_state_values_image(
+        np.round(VI.state_values, decimals=2),
+        'images/grid_world_vi_optimal_state_values.png',
+        GRID_HEIGHT, GRID_WIDTH
+    )
 
     draw_grid_world_action_values_image(
         VI.calculate_grid_world_optimal_action_values(),

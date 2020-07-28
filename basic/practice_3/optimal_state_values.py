@@ -4,7 +4,7 @@ import os
 from basic.practice_1.gridworld import GridWorld
 
 # 이미지 저장 경로 확인 및 생성
-from utils.util import draw_grid_world_image
+from utils.util import draw_grid_world_state_values_image
 
 GRID_HEIGHT = 5
 GRID_WIDTH = 5
@@ -65,7 +65,7 @@ def main():
 
     optimal_state_values = calculate_grid_world_optimal_state_values(env)
 
-    draw_grid_world_image(
+    draw_grid_world_state_values_image(
         np.round(optimal_state_values, decimals=2), 'images/grid_world_optimal_state_values.png', GRID_HEIGHT, GRID_WIDTH
     )
 

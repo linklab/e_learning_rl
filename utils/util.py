@@ -15,7 +15,7 @@ def softmax(x):
 
 
 # 학습 이후의 가치함수를 표 형태로 그리는 함수
-def draw_grid_world_image(state_values, filename, GRID_HEIGHT, GRID_WIDTH):
+def draw_grid_world_state_values_image(state_values, filename, GRID_HEIGHT, GRID_WIDTH):
     # 축 표시 제거, 크기 조절 등 이미지 그리기 이전 설정 작업
     fig, ax = plt.subplots()
     ax.set_axis_off()

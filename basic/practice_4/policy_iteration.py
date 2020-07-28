@@ -2,7 +2,8 @@ import numpy as np
 import os
 
 from basic.practice_1.gridworld import GridWorld
-from utils.util import softmax, draw_grid_world_policy_image, draw_grid_world_action_values_image
+from utils.util import softmax, draw_grid_world_policy_image, draw_grid_world_action_values_image, \
+    draw_grid_world_state_values_image
 
 GRID_HEIGHT = 4
 GRID_WIDTH = 4
@@ -13,15 +14,11 @@ DISCOUNT_RATE = 0.9
 THETA_1 = 0.0001
 THETA_2 = 0.0001
 
-MAX_EPISODES = 5000
-
 
 # 정책 반복 클래스
 class PolicyIteration:
     def __init__(self, env):
         self.env = env
-
-        self.max_iteration = MAX_EPISODES
 
         self.terminal_states = [(0, 0), (4, 4)]
 
@@ -63,11 +60,9 @@ class PolicyIteration:
                         for action in self.env.action_space.ACTIONS:
                             (next_i, next_j), reward, prob = self.env.get_state_action_probability(state=(i, j), action=action)
 
-                            action_probs = self.policy[i, j, :]
-
                             # Bellman-Equation, 벨만 방정식 적용
                             values.append(
-                                action_probs[action] * prob * (reward + DISCOUNT_RATE * old_state_values[next_i, next_j])
+                                self.policy[i, j, action] * prob * (reward + DISCOUNT_RATE * old_state_values[next_i, next_j])
                             )
 
                         state_values[i][j] = np.sum(values)
@@ -75,8 +70,8 @@ class PolicyIteration:
             iter_num += 1
 
             # 갱신되는 값이 THETA_1(=0.0001)을 기준으로 수렴하는지 판정
-            max_delta_value = abs(old_state_values - state_values).max()
-            if max_delta_value < THETA_1:
+            delta_value = np.sum(np.absolute(old_state_values - state_values))
+            if delta_value < THETA_1:
                 break
 
         self.state_values = state_values
@@ -96,10 +91,8 @@ class PolicyIteration:
                     for action in self.env.action_space.ACTIONS:
                         new_policy[i][j][action] = 0.00
                 else:
-                    actions = []
                     q_func = []
                     for action in self.env.action_space.ACTIONS:
-                        actions.append(action)
                         (next_i, next_j), reward, prob = self.env.get_state_action_probability(state=(i, j), action=action)
                         q_func.append(
                             prob * (reward + DISCOUNT_RATE * self.state_values[next_i, next_j])
@@ -107,10 +100,7 @@ class PolicyIteration:
 
                     new_policy[i, j, :] = softmax(q_func)
 
-        error = 0.0
-        for i in range(GRID_HEIGHT):
-            for j in range(GRID_WIDTH):
-                error += np.sum(np.absolute(np.array(self.policy[i, j, :]) - np.array(new_policy[i, j, :])))
+        error = np.sum(np.absolute(self.policy - new_policy))
 
         if error > THETA_2:
             is_policy_stable = False
@@ -127,9 +117,10 @@ class PolicyIteration:
         is_policy_stable = False
 
         print("[[[ 정책 반복 시작! ]]]")
-        while not is_policy_stable and iter_num < self.max_iteration:
+
+        while not is_policy_stable:
             iter_num_policy_evaluation = self.policy_evaluation()
-            print("*** 정책 평가 [수렴까지 누적 반복 횟수: {0}] ***".format(iter_num_policy_evaluation))
+            print("*** 정책 평가 [수렴까지 반복 횟수: {0}] ***".format(iter_num_policy_evaluation))
 
             is_policy_stable, error = self.policy_improvement()
             print("*** 정책 개선 [에러 값: {0:7.5f}] ***".format(error))
@@ -184,7 +175,13 @@ def main():
     PI = PolicyIteration(env)
     PI.start_iteration()
 
-    print(PI.state_values, end="\n\n")
+    print(PI.state_values)
+
+    draw_grid_world_state_values_image(
+        np.round(PI.state_values, decimals=2),
+        'images/grid_world_pi_optimal_state_values.png',
+        GRID_HEIGHT, GRID_WIDTH
+    )
 
     draw_grid_world_action_values_image(
         PI.calculate_grid_world_optimal_action_values(),
