@@ -8,8 +8,6 @@ from utils.util import draw_grid_world_action_values_image, draw_grid_world_poli
 
 GRID_HEIGHT = 5
 GRID_WIDTH = 5
-NUM_ACTIONS = 4
-
 DISCOUNT_RATE = 0.9      # 감쇄율
 
 A_POSITION = (0, 1)         # 임의로 지정한 특별한 상태 A 좌표
@@ -21,7 +19,7 @@ B_PRIME_POSITION = (2, 3)   # 상태 B에서 행동시 도착할 위치 좌표
 
 # 그리드 월드에서 최적 행동 가치 산출
 def calculate_grid_world_optimal_action_values(env):
-    action_value_function = np.zeros((GRID_HEIGHT, GRID_WIDTH, NUM_ACTIONS))
+    action_value_function = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
 
     # 행동 가치 함수의 값들이 수렴할 때까지 반복
     while True:
@@ -76,7 +74,9 @@ def main():
 
     draw_grid_world_action_values_image(
         optimal_action_values, 'images/grid_world_optimal_action_values.png',
-        GRID_HEIGHT, GRID_WIDTH, NUM_ACTIONS, env.action_space.ACTION_SYMBOLS
+        GRID_HEIGHT, GRID_WIDTH,
+        env.action_space.NUM_ACTIONS,
+        env.action_space.ACTION_SYMBOLS
     )
 
     print()
@@ -84,7 +84,8 @@ def main():
     optimal_policy = calculate_optimal_policy(optimal_action_values)
     draw_grid_world_policy_image(
         optimal_policy, "images/grid_world_optimal_policy.png",
-        GRID_HEIGHT, GRID_WIDTH, env.action_space.ACTION_SYMBOLS
+        GRID_HEIGHT, GRID_WIDTH,
+        env.action_space.ACTION_SYMBOLS
     )
 
 

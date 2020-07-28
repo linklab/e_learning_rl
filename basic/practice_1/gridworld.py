@@ -56,7 +56,8 @@ class GridWorld(gym.Env):
             self.action_space.ACTION_RIGHT
         ]
 
-        self.action_space.ACTION_SYMBOLS = ["\u2191", "\u2193", "\u2190", "\u2192"]
+        self.action_space.ACTION_SYMBOLS = ["\u21E7", "\u21E9", "\u21E6", "\u21E8"] # UP, DOWN, LEFT, RIGHT
+        #self.action_space.ACTION_SYMBOLS = ["\u2191", "\u2193", "\u2190", "\u2192"] # UP, DOWN, LEFT, RIGHT
         self.action_space.NUM_ACTIONS = len(self.action_space.ACTIONS)
 
         # 시작 상태 위치
