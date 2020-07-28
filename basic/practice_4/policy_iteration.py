@@ -26,29 +26,23 @@ class PolicyIteration:
         self.terminal_states = [(0, 0), (4, 4)]
 
         self.state_values = None
-        self.policy = self.generate_random_policy()
+        self.policy = np.empty([GRID_HEIGHT, GRID_WIDTH, self.env.action_space.NUM_ACTIONS])
+
+        # 모든 상태에서 수행 가능한 행동에 맞춰 임의의 정책을 생성함
+        # 초기에 각 행동의 선택 확률은 모두 같음
+        for i in range(GRID_HEIGHT):
+            for j in range(GRID_WIDTH):
+                for action in self.env.action_space.ACTIONS:
+                    if (i, j) in TERMINAL_STATES:
+                        self.policy[i][j][action] = 0.00
+                    else:
+                        self.policy[i][j][action] = 0.25
 
         # 정책 평가
         self.delta = 0.0
 
         # 정책 평가의 역
         self.theta = 0.001
-
-    # 모든 상태에서 수행 가능한 행동에 맞춰 임의의 정책을 생성함
-    # 초기에 각 행동의 선택 확률은 모두 같음
-    def generate_random_policy(self):
-        policy = dict()
-
-        for i in range(GRID_HEIGHT):
-            for j in range(GRID_WIDTH):
-                actions = []
-                action_probs = []
-                for action in range(self.env.action_space.NUM_ACTIONS):
-                    actions.append(action)
-                    action_probs.append(0.25)
-                policy[(i, j)] = (actions, action_probs)
-
-        return policy
 
     # 정책 평가 함수
     def policy_evaluation(self):
@@ -69,7 +63,7 @@ class PolicyIteration:
                         for action in self.env.action_space.ACTIONS:
                             (next_i, next_j), reward, prob = self.env.get_state_action_probability(state=(i, j), action=action)
 
-                            _, action_probs = self.policy[(i, j)]
+                            action_probs = self.policy[i, j, :]
 
                             # Bellman-Equation, 벨만 방정식 적용
                             values.append(
@@ -91,7 +85,7 @@ class PolicyIteration:
 
     # 정책 개선 함수
     def policy_improvement(self):
-        new_policy = dict()
+        new_policy = np.empty([GRID_HEIGHT, GRID_WIDTH, self.env.action_space.NUM_ACTIONS])
 
         is_policy_stable = True
 
@@ -99,12 +93,8 @@ class PolicyIteration:
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
                 if (i, j) in TERMINAL_STATES:
-                    actions = []
-                    action_probs = []
-                    for action in range(self.env.action_space.NUM_ACTIONS):
-                        actions.append(action)
-                        action_probs.append(0.25)
-                    new_policy[(i, j)] = (actions, action_probs)
+                    for action in self.env.action_space.ACTIONS:
+                        new_policy[i][j][action] = 0.00
                 else:
                     actions = []
                     q_func = []
@@ -115,12 +105,12 @@ class PolicyIteration:
                             prob * (reward + DISCOUNT_RATE * self.state_values[next_i, next_j])
                         )
 
-                    new_policy[(i, j)] = (actions, softmax(q_func))
+                    new_policy[i, j, :] = softmax(q_func)
 
         error = 0.0
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
-                error += np.sum(np.absolute(np.array(self.policy[(i, j)][1]) - np.array(new_policy[(i, j)][1])))
+                error += np.sum(np.absolute(np.array(self.policy[i, j, :]) - np.array(new_policy[i, j, :])))
 
         if error > THETA_2:
             is_policy_stable = False
@@ -157,8 +147,8 @@ class PolicyIteration:
         optimal_policy = dict()
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
-                max_ = np.max(self.policy[i, j][1])
-                arg_max_ = np.nonzero(self.policy[i, j][1] == max_)
+                max_ = np.max(self.policy[i, j, :])
+                arg_max_ = np.nonzero(self.policy[i, j, :] == max_)
                 indices = arg_max_[0]
                 optimal_policy[(i, j)] = indices
 
@@ -198,7 +188,7 @@ def main():
 
     draw_grid_world_action_values_image(
         PI.calculate_grid_world_optimal_action_values(),
-        'images/grid_world_optimal_action_values.png',
+        'images/grid_world_pi_optimal_action_values.png',
         GRID_HEIGHT, GRID_WIDTH,
         env.action_space.NUM_ACTIONS,
         env.action_space.ACTION_SYMBOLS
@@ -206,7 +196,7 @@ def main():
 
     draw_grid_world_policy_image(
         PI.calculate_optimal_policy(),
-        "images/grid_world_optimal_policy.png",
+        "images/grid_world_pi_optimal_policy.png",
         GRID_HEIGHT, GRID_WIDTH, env.action_space.ACTION_SYMBOLS
     )
 

@@ -1,6 +1,6 @@
 import numpy as np
-from environments.gridworld import GridWorld
-from utils.util import softmax
+from basic.practice_1.gridworld import GridWorld
+from utils.util import softmax, draw_grid_world_action_values_image, draw_grid_world_policy_image
 
 GRID_HEIGHT = 4
 GRID_WIDTH = 4
@@ -22,7 +22,7 @@ class ValueIteration:
         self.terminal_states = [(0, 0), (4, 4)]
 
         self.state_values = None
-        self.policy = np.empty([GRID_HEIGHT, GRID_WIDTH, self.env.action_space.num_actions])
+        self.policy = np.empty([GRID_HEIGHT, GRID_WIDTH, self.env.action_space.NUM_ACTIONS])
 
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
@@ -75,9 +75,8 @@ class ValueIteration:
 
         return iter_num
 
-    # 정책 개선 함수
+    # 최적 정책 산출 함수
     def policy_setup(self):
-        # 행동-가치 함수 생성
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
                 if (i, j) in TERMINAL_STATES:
@@ -105,6 +104,30 @@ class ValueIteration:
 
         return self.state_values, self.policy
 
+    def calculate_optimal_policy(self):
+        optimal_policy = dict()
+        for i in range(GRID_HEIGHT):
+            for j in range(GRID_WIDTH):
+                max_ = np.max(self.policy[i, j, :])
+                arg_max_ = np.nonzero(self.policy[i, j, :] == max_)
+                indices = arg_max_[0]
+                optimal_policy[(i, j)] = indices
+
+        return optimal_policy
+
+    def calculate_grid_world_optimal_action_values(self):
+        action_value_function = np.zeros((GRID_HEIGHT, GRID_WIDTH, self.env.action_space.NUM_ACTIONS))
+        for i in range(GRID_HEIGHT):
+            for j in range(GRID_WIDTH):
+                # 주어진 상태에서 가능한 모든 행동들의 결과로 다음 상태 및 보상 정보 갱신
+                for action in self.env.action_space.ACTIONS:
+                    (next_i, next_j), reward, prob = self.env.get_state_action_probability(state=(i, j), action=action)
+
+                    action_value_function[i, j, action] = \
+                        prob * (reward + DISCOUNT_RATE * self.state_values[next_i, next_j])
+
+        return action_value_function
+
 
 if __name__ == '__main__':
     # 그리드 월드 환경 객체 생성
@@ -121,9 +144,17 @@ if __name__ == '__main__':
 
     VI = ValueIteration(env)
     VI.start_iteration()
-    print(VI.state_values, end="\n\n")
 
-    for i in range(GRID_HEIGHT):
-        for j in range(GRID_WIDTH):
-            print(i, j, VI.policy[i][j])  # UP, DOWN, LEFT, RIGHT
-        print()
+    draw_grid_world_action_values_image(
+        VI.calculate_grid_world_optimal_action_values(),
+        'images/grid_world_vi_optimal_action_values.png',
+        GRID_HEIGHT, GRID_WIDTH,
+        env.action_space.NUM_ACTIONS,
+        env.action_space.ACTION_SYMBOLS
+    )
+
+    draw_grid_world_policy_image(
+        VI.calculate_optimal_policy(),
+        "images/grid_world_vi_optimal_policy.png",
+        GRID_HEIGHT, GRID_WIDTH, env.action_space.ACTION_SYMBOLS
+    )

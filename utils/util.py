@@ -119,4 +119,3 @@ def draw_grid_world_policy_image(policy, filename, GRID_HEIGHT, GRID_WIDTH, ACTI
 
     plt.savefig(filename)
     plt.close()
-
