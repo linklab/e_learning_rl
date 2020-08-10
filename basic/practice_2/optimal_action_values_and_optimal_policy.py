@@ -73,7 +73,8 @@ def main():
     optimal_action_values = calculate_grid_world_optimal_action_values(env)
 
     draw_grid_world_action_values_image(
-        optimal_action_values, 'images/grid_world_optimal_action_values.png',
+        optimal_action_values,
+        'images/grid_world_optimal_action_values.png',
         GRID_HEIGHT, GRID_WIDTH,
         env.action_space.NUM_ACTIONS,
         env.action_space.ACTION_SYMBOLS
@@ -83,7 +84,8 @@ def main():
 
     optimal_policy = calculate_optimal_policy(optimal_action_values)
     draw_grid_world_policy_image(
-        optimal_policy, "images/grid_world_optimal_policy.png",
+        optimal_policy,
+        "images/grid_world_optimal_policy.png",
         GRID_HEIGHT, GRID_WIDTH,
         env.action_space.ACTION_SYMBOLS
     )

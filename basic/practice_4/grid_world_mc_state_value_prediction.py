@@ -19,16 +19,13 @@ def get_exploring_start_state():
     return (i, j)
 
 
-# 환경에서 무작위로 에피소드(현재 상태, 행동, 다음 상태, 보상)를 생성함
+# 환경에서 무작위로 에피소드 생성
 def generate_random_episode(env):
     episode = []
     visited_states = []
 
     initial_state = get_exploring_start_state()
     env.moveto(initial_state)
-
-    episode.append((initial_state, -1))
-    visited_states.append(initial_state)
 
     state = initial_state
     done = False
@@ -128,7 +125,9 @@ def main():
         print()
 
     draw_grid_world_state_values_image(
-        np.round(state_values, decimals=2), 'images/first_visit_mc_state_values.png', GRID_HEIGHT, GRID_WIDTH
+        np.round(state_values, decimals=2),
+        'images/grid_world_mc_state_values_first_visit.png',
+        GRID_HEIGHT, GRID_WIDTH
     )
     print()
 
@@ -140,7 +139,9 @@ def main():
         print()
 
     draw_grid_world_state_values_image(
-        np.round(state_values, decimals=2), 'images/every_visit_mc_state_values.png', GRID_HEIGHT, GRID_WIDTH
+        np.round(state_values, decimals=2),
+        'images/grid_world_mc_state_values_every_visit.png',
+        GRID_HEIGHT, GRID_WIDTH
     )
 
 
