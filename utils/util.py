@@ -187,3 +187,29 @@ def draw_grid_world_policy_image(policy, filename, GRID_HEIGHT, GRID_WIDTH, ACTI
 
     plt.savefig(filename)
     plt.close()
+
+
+def draw_random_walk_policy_image(policy, env):
+    randomwalk_str = ""
+    randomwalk_str += " T1      " + "       ".join(["{0}".format(i) for i in range(env.num_internal_states)]) + "      T2\n"
+
+    randomwalk_str += "       "
+    for state in env.observation_space.STATES:
+        actions, prob = policy[state]
+        randomwalk_str += "{0}:{1:4}  ".format(
+            env.action_space.ACTION_SYMBOLS[env.action_space.ACTION_LEFT],
+            np.round(prob[env.action_space.ACTION_LEFT], decimals=2)
+        )
+    randomwalk_str += "\n"
+
+    randomwalk_str += "       "
+    for state in env.observation_space.STATES:
+        actions, prob = policy[state]
+        randomwalk_str += "{0}:{1:4}  ".format(
+            env.action_space.ACTION_SYMBOLS[env.action_space.ACTION_RIGHT],
+            np.round(prob[env.action_space.ACTION_RIGHT], decimals=2)
+        )
+
+    print(randomwalk_str)
+
+

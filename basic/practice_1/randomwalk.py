@@ -33,7 +33,7 @@ class RandomWalk(gym.Env):
             self.action_space.ACTION_LEFT,
             self.action_space.ACTION_RIGHT
         ]
-        self.action_space.num_actions = len(self.action_space.ACTIONS)
+        self.action_space.NUM_ACTIONS = len(self.action_space.ACTIONS)
 
         # 시작 상태 위치
         self.observation_space.START_STATE = self.observation_space.STATES[int(num_internal_states / 2)]
