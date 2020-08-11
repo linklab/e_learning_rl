@@ -125,7 +125,7 @@ def main():
         print()
 
     draw_grid_world_state_values_image(
-        np.round(state_values, decimals=2),
+        state_values,
         'images/grid_world_mc_state_values_first_visit.png',
         GRID_HEIGHT, GRID_WIDTH
     )
@@ -139,7 +139,7 @@ def main():
         print()
 
     draw_grid_world_state_values_image(
-        np.round(state_values, decimals=2),
+        state_values,
         'images/grid_world_mc_state_values_every_visit.png',
         GRID_HEIGHT, GRID_WIDTH
     )

@@ -1,6 +1,6 @@
 import numpy as np
 from basic.practice_1.gridworld import GridWorld
-from utils.util import softmax, draw_grid_world_action_values_image, draw_grid_world_policy_image, \
+from utils.util import softmax, draw_grid_world_action_values_image, draw_grid_world_optimal_policy_image, \
     draw_grid_world_state_values_image
 
 GRID_HEIGHT = 4
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     print(VI.state_values)
 
     draw_grid_world_state_values_image(
-        np.round(VI.state_values, decimals=2),
+        VI.state_values,
         'images/grid_world_vi_optimal_state_values.png',
         GRID_HEIGHT, GRID_WIDTH
     )
@@ -160,7 +160,7 @@ if __name__ == '__main__':
         env.action_space.ACTION_SYMBOLS
     )
 
-    draw_grid_world_policy_image(
+    draw_grid_world_optimal_policy_image(
         VI.calculate_optimal_policy(),
         "images/grid_world_vi_optimal_policy.png",
         GRID_HEIGHT, GRID_WIDTH, env.action_space.ACTION_SYMBOLS

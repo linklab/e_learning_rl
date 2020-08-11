@@ -1,8 +1,7 @@
 # 사용 패키지 임포트
 import numpy as np
-import random
 from basic.practice_1.gridworld import GridWorld
-from utils.util import softmax, draw_grid_world_policy_image
+from utils.util import draw_grid_world_policy_image
 
 GRID_HEIGHT = 4
 GRID_WIDTH = 4
@@ -169,7 +168,7 @@ def main():
     env = GridWorld(
         height=GRID_HEIGHT,
         width=GRID_WIDTH,
-        start_state=None,       # exploring start
+        start_state=(0, 1),       # exploring start
         terminal_states=TERMINAL_STATES,
         transition_reward=-1.0,
         terminal_reward=-1.0,

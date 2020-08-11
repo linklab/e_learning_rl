@@ -2,6 +2,7 @@
 import numpy as np
 from basic.practice_1.gridworld import GridWorld
 from utils.util import softmax, draw_grid_world_policy_image
+import random
 
 GRID_HEIGHT = 4
 GRID_WIDTH = 4
@@ -10,6 +11,15 @@ DISCOUNT_RATE = 1.0
 THETA_1 = 0.0001
 THETA_2 = 0.0001
 MAX_EPISODES = 300
+
+
+def get_exploring_start_state():
+    while True:
+        i = random.randrange(GRID_HEIGHT)
+        j = random.randrange(GRID_WIDTH)
+        if (i, j) not in TERMINAL_STATES:
+            break
+    return (i, j)
 
 
 class MonteCarloControl:
@@ -52,7 +62,8 @@ class MonteCarloControl:
         episode = []
         visited_state_actions = []
 
-        state = self.env.reset() # exploring start
+        state = get_exploring_start_state() # exploring start
+        self.env.moveto(state)
 
         done = False
         trajectory_size = 0
@@ -95,7 +106,7 @@ class MonteCarloControl:
                 if (i, j) in TERMINAL_STATES:
                     actions = []
                     action_probs = []
-                    for action in range(self.env.action_space.num_actions):
+                    for action in range(self.env.action_space.NUM_ACTIONS):
                         actions.append(action)
                         action_probs.append(0.25)
                     new_policy[(i, j)] = (actions, action_probs)
@@ -167,16 +178,6 @@ def main():
         GRID_HEIGHT, GRID_WIDTH,
         env.action_space.ACTION_SYMBOLS
     )
-
-    # with np.printoptions(precision=2, suppress=True):
-    #     for i in range(GRID_HEIGHT):
-    #         for j in range(GRID_WIDTH):
-    #             print(
-    #                 i, j,
-    #                 ": UP, DOWN, LEFT, RIGHT",
-    #                 MC.policy[(i, j)][1]
-    #             )
-    #         print()
 
 
 if __name__ == "__main__":

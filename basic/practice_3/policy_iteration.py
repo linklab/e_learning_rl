@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 from basic.practice_1.gridworld import GridWorld
-from utils.util import softmax, draw_grid_world_policy_image, draw_grid_world_action_values_image, \
+from utils.util import softmax, draw_grid_world_optimal_policy_image, draw_grid_world_action_values_image, \
     draw_grid_world_state_values_image
 
 GRID_HEIGHT = 4
@@ -178,7 +178,7 @@ def main():
     print(PI.state_values)
 
     draw_grid_world_state_values_image(
-        np.round(PI.state_values, decimals=2),
+        PI.state_values,
         'images/grid_world_pi_optimal_state_values.png',
         GRID_HEIGHT, GRID_WIDTH
     )
@@ -191,7 +191,7 @@ def main():
         env.action_space.ACTION_SYMBOLS
     )
 
-    draw_grid_world_policy_image(
+    draw_grid_world_optimal_policy_image(
         PI.calculate_optimal_policy(),
         "images/grid_world_pi_optimal_policy.png",
         GRID_HEIGHT, GRID_WIDTH, env.action_space.ACTION_SYMBOLS

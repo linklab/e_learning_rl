@@ -70,7 +70,7 @@ def main():
     state_values = calculate_grid_world_state_values(env)
 
     draw_grid_world_state_values_image(
-        np.round(state_values, decimals=2), 'images/grid_world_state_values.png', GRID_HEIGHT, GRID_WIDTH
+        state_values, 'images/grid_world_state_values.png', GRID_HEIGHT, GRID_WIDTH
     )
 
     with np.printoptions(precision=2, suppress=True):
