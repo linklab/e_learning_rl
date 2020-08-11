@@ -138,7 +138,7 @@ def main():
         outward_reward=-1.0
     )
 
-    # 비어있는 상태-가치 함수를 0으로 초기화하며 생성함₩
+    # 비어있는 상태-가치 함수를 0으로 초기화하며 생성함
     state_action_values, returns = generate_initial_q_value_and_return(env)
 
     # 초기 임의 정책 생성

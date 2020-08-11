@@ -43,7 +43,7 @@ def generate_random_episode(env):
     return episode, visited_state_actions
 
 
-# 첫 방문 행동 가치 MC 추정 함수
+# 첫 방문 행동 가치 MC 예측
 def first_visit_mc_prediction(env, gamma, num_iter):
     # 비어있는 상태-가치 함수를 0으로 초기화하며 생성함
     state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))

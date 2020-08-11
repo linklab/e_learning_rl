@@ -119,7 +119,7 @@ def generate_soft_greedy_policy(env, state_action_values, policy):
 
 
 def main():
-    # 그리드 월드 환경 객체 생성
+    # 랜덤 워크 환경 객체 생성
     env = RandomWalk(
         num_internal_states=5,
         transition_reward=0.0,
@@ -127,7 +127,7 @@ def main():
         right_terminal_reward=1.0
     )
 
-    # 비어있는 상태-가치 함수를 0으로 초기화하며 생성함₩
+    # 비어있는 상태-가치 함수를 0으로 초기화하며 생성함
     state_action_values, returns = generate_initial_q_value_and_return(env)
 
     # 초기 임의 정책 생성
