@@ -1,8 +1,6 @@
 import random
-
 import numpy as np
 from basic.practice_1.gridworld import GridWorld
-from utils.util import draw_grid_world_state_values_image
 import matplotlib.pyplot as plt
 
 GRID_HEIGHT = 4
@@ -86,7 +84,7 @@ def temporal_difference(env, policy, state_values, alpha, gamma=1.0):
 # @values: 현재의 상태 가치
 # @alpha: 스텝 사이즈
 # @batch: 배치 업데이트 유무
-def temporal_difference_batch(env, policy, state_values, alpha=0.1, gamma=1.0):
+def temporal_difference_batch(env, policy, state_values, alpha=0.1, gamma=1.0, num_batch_updates=10):
     env.reset()
 
     initial_state = get_exploring_start_state()
@@ -105,7 +103,7 @@ def temporal_difference_batch(env, policy, state_values, alpha=0.1, gamma=1.0):
 
         state = next_state
 
-    for i in range(10):
+    for i in range(num_batch_updates):
         for sample in batch_list:
             state = sample[0]
             next_state = sample[2]
@@ -118,7 +116,7 @@ def temporal_difference_batch(env, policy, state_values, alpha=0.1, gamma=1.0):
                 state_values[state] += alpha * (reward + gamma * state_values[next_state] - state_values[state])
 
 
-# @method: 'TD(0)' 또는 'MC'
+# @method: 'TD(0)' 또는 'TD(0)_batch'
 def batch_updating(env, method, episodes, alpha):
     policy = generate_initial_random_policy(env)
 
@@ -134,7 +132,7 @@ def batch_updating(env, method, episodes, alpha):
             if method == 'TD(0)':
                 temporal_difference(env, policy, state_values, alpha=alpha)
             else:
-                temporal_difference_batch(env, policy, state_values, alpha=alpha)
+                temporal_difference_batch(env, policy, state_values, alpha=alpha, num_batch_updates=10)
             errors.append(np.sqrt(np.sum(np.power(TRUE_VALUES - state_values, 2)) / 25))
         total_errors += np.asarray(errors)
         print("method: {0}, run: {1}".format(method, run))
@@ -169,4 +167,4 @@ if __name__ == '__main__':
         terminal_reward=-1.0,
         outward_reward=-1.0
     )
-    mc_td_batch_comparison(env, alpha=0.05)
+    mc_td_batch_comparison(env, alpha=0.005)
