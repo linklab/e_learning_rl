@@ -106,7 +106,7 @@ def mc_td_comparison(env):
     td_alphas = [0.15, 0.1, 0.05, 0.025]
     mc_alphas = [0.15, 0.1, 0.05, 0.025]
     # mc_alphas = [0.01, 0.02, 0.03, 0.04]
-    total_runs = 200
+    total_runs = 100
     episodes = 200
     plt.figure()
 
@@ -123,12 +123,13 @@ def mc_td_comparison(env):
         for _ in range(total_runs):
             errors = []
             state_values = np.copy(VALUES)
+
             for i in range(episodes):
-                errors.append(np.sqrt(np.sum(np.power(TRUE_VALUES - state_values, 2)) / NUM_INTERNAL_STATES))
                 if method == 'TD(0)':
                     temporal_difference(env, policy, state_values, alpha=alpha)
                 else:
                     first_visit_mc_prediction(env, policy, state_values, alpha=alpha)
+                errors.append(np.sqrt(np.sum(np.power(TRUE_VALUES - state_values, 2)) / NUM_INTERNAL_STATES))
             total_errors += np.asarray(errors)
         total_errors /= total_runs
         plt.plot(total_errors, linestyle=linestyle, label=method + ', alpha = {0:.2f}'.format(alpha))
