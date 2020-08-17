@@ -1,7 +1,7 @@
 # 사용 패키지 임포트
 import numpy as np
 from basic.practice_1.randomwalk import RandomWalk
-from utils.util import draw_grid_world_policy_image, draw_random_walk_policy_image
+from utils.util import draw_random_walk_policy_image
 
 DISCOUNT_RATE = 0.9
 MAX_EPISODES = 500
