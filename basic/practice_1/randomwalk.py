@@ -29,6 +29,8 @@ class RandomWalk(gym.Env):
         self.action_space.ACTION_LEFT = 0
         self.action_space.ACTION_RIGHT = 1
         self.action_space.ACTION_SYMBOLS = ["\u2190", "\u2192"]
+
+        # 종료 상태를 제외한 임의의 상태에서 왼쪽 이동 또는 오른쪽 이동
         self.action_space.ACTIONS = [
             self.action_space.ACTION_LEFT,
             self.action_space.ACTION_RIGHT
