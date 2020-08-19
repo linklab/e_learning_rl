@@ -156,7 +156,7 @@ def draw_grid_world_policy_image(policy, filename, GRID_HEIGHT, GRID_WIDTH, ACTI
             for action in actions:
                 str_values.append("{0} ({1})".format(
                     ACTION_SYMBOLS[action],
-                    np.round(probs[action], decimals=2)
+                    np.round(probs[action], decimals=3)
                 ))
             action_str_values[i].append("\n".join(str_values))
 

@@ -10,12 +10,11 @@ EPSILON = 0.1
 
 # 비어있는 행동 가치 함수를 0으로 초기화하며 생성함
 def generate_initial_q_value_and_return(env):
-    state_action_values = dict()
+    state_action_values = np.zeros((env.num_internal_states, env.action_space.NUM_ACTIONS))
     returns = dict()
 
     for state in env.observation_space.STATES:
         for action in env.action_space.ACTIONS:
-            state_action_values[(state, action)] = 0.0
             returns[(state, action)] = list()
 
     return state_action_values, returns
@@ -71,7 +70,7 @@ def first_visit_mc_prediction(state_action_values, returns, episode, visited_sta
 
         if all(value_prediction_conditions):
             returns[(state, action)].append(G)
-            state_action_values[(state, action)] = np.mean(returns[(state, action)])
+            state_action_values[state, action] = np.mean(returns[(state, action)])
 
 
 # 소프트 탐욕적 정책 생성
@@ -87,15 +86,10 @@ def generate_soft_greedy_policy(env, state_action_values, policy):
                 action_probs.append(0.5)
             new_policy[state] = (actions, action_probs)
         else:
-            q_values = []
+            max_prob_actions = [action_ for action_, value_ in enumerate(state_action_values[state, :]) if
+                                value_ == np.max(state_action_values[state, :])]
             for action in range(env.action_space.NUM_ACTIONS):
                 actions.append(action)
-                q_values.append(state_action_values[(state, action)])
-
-            max_ = np.max(q_values)
-            arg_max_ = np.nonzero(np.array(q_values) == max_)
-            max_prob_actions = arg_max_[0]
-            for action in range(env.action_space.NUM_ACTIONS):
                 if action in max_prob_actions:
                     action_probs.append(
                         (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.action_space.NUM_ACTIONS

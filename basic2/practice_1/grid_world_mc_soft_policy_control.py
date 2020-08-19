@@ -7,20 +7,19 @@ GRID_HEIGHT = 4
 GRID_WIDTH = 4
 TERMINAL_STATES = [(0, 0), (GRID_HEIGHT-1, GRID_WIDTH-1)]
 DISCOUNT_RATE = 1.0
-MAX_EPISODES = 100
+MAX_EPISODES = 10000
 
 EPSILON = 0.1
 
 
 # 비어있는 행동 가치 함수를 0으로 초기화하며 생성함
 def generate_initial_q_value_and_return(env):
-    state_action_values = dict()
+    state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
     returns = dict()
 
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
             for action in env.action_space.ACTIONS:
-                state_action_values[((i, j), action)] = 0.0
                 returns[((i, j), action)] = list()
 
     return state_action_values, returns
@@ -77,7 +76,7 @@ def first_visit_mc_prediction(state_action_values, returns, episode, visited_sta
 
         if all(value_prediction_conditions):
             returns[(state, action)].append(G)
-            state_action_values[(state, action)] = np.mean(returns[(state, action)])
+            state_action_values[state[0], state[1], action] = np.mean(returns[(state, action)])
 
 
 # 소프트 탐욕적 정책 생성
@@ -94,15 +93,10 @@ def generate_soft_greedy_policy(env, state_action_values, policy):
                     action_probs.append(0.25)
                 new_policy[(i, j)] = (actions, action_probs)
             else:
-                q_values = []
+                max_prob_actions = [action_ for action_, value_ in enumerate(state_action_values[i, j, :]) if
+                                    value_ == np.max(state_action_values[i, j, :])]
                 for action in env.action_space.ACTIONS:
                     actions.append(action)
-                    q_values.append(state_action_values[((i, j), action)])
-
-                max_ = np.max(q_values)
-                arg_max_ = np.nonzero(np.array(q_values) == max_)
-                max_prob_actions = arg_max_[0]
-                for action in env.action_space.ACTIONS:
                     if action in max_prob_actions:
                         action_probs.append(
                             (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.action_space.NUM_ACTIONS

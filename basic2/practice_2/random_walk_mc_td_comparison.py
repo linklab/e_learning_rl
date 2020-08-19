@@ -17,6 +17,8 @@ VALUES[0:NUM_INTERNAL_STATES] = 0.5
 TRUE_VALUES = np.zeros(NUM_INTERNAL_STATES)
 TRUE_VALUES[0:NUM_INTERNAL_STATES] = np.arange(1, 6) / 6.0
 
+MAX_EPISODES = 200
+
 
 # 모든 상태에서 수행 가능한 행동에 맞춰 임의의 정책을 생성함
 # 초기에 각 행동의 선택 확률은 모두 같음
@@ -105,14 +107,13 @@ def mc_td_comparison(env):
     # 두 가지 방법에 동일한 스텝 사이즈 적용
     td_alphas = [0.15, 0.1, 0.05, 0.025]
     mc_alphas = [0.15, 0.1, 0.05, 0.025]
-    # mc_alphas = [0.01, 0.02, 0.03, 0.04]
     total_runs = 100
-    episodes = 200
+
     plt.figure()
 
     policy = generate_initial_random_policy(env)
     for i, alpha in enumerate(td_alphas + mc_alphas):
-        total_errors = np.zeros(episodes)
+        total_errors = np.zeros(MAX_EPISODES)
         if i < len(td_alphas):
             method = 'TD(0)'
             linestyle = '-'
@@ -124,7 +125,7 @@ def mc_td_comparison(env):
             errors = []
             state_values = np.copy(VALUES)
 
-            for i in range(episodes):
+            for i in range(MAX_EPISODES):
                 if method == 'TD(0)':
                     temporal_difference(env, policy, state_values, alpha=alpha)
                 else:

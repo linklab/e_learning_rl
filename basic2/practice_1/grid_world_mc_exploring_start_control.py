@@ -8,7 +8,7 @@ GRID_HEIGHT = 4
 GRID_WIDTH = 4
 TERMINAL_STATES = [(0, 0), (GRID_HEIGHT-1, GRID_WIDTH-1)]
 DISCOUNT_RATE = 1.0
-MAX_EPISODES = 100
+MAX_EPISODES = 10000
 
 
 def get_exploring_start_state():
@@ -22,16 +22,16 @@ def get_exploring_start_state():
 
 # 비어있는 행동 가치 함수를 0으로 초기화하며 생성함
 def generate_initial_q_value_and_return(env):
-    state_action_values = dict()
+    state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
     returns = dict()
 
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
             for action in env.action_space.ACTIONS:
-                state_action_values[((i, j), action)] = 0.0
                 returns[((i, j), action)] = list()
 
     return state_action_values, returns
+
 
 # 모든 상태에서 수행 가능한 행동에 맞춰 임의의 정책을 생성함
 # 초기에 각 행동의 선택 확률은 모두 같음
@@ -87,7 +87,7 @@ def first_visit_mc_prediction(state_action_values, returns, episode, visited_sta
 
         if all(value_prediction_conditions):
             returns[(state, action)].append(G)
-            state_action_values[(state, action)] = np.mean(returns[(state, action)])
+            state_action_values[state[0], state[1], action] = np.mean(returns[(state, action)])
 
 
 # 탐욕적인 정책 생성
@@ -106,8 +106,7 @@ def generate_greedy_policy(env, state_action_values, policy):
             else:
                 for action in env.action_space.ACTIONS:
                     actions.append(action)
-                    action_probs.append(state_action_values[((i, j), action)])
-
+                    action_probs.append(state_action_values[i, j, action])
                 new_policy[(i, j)] = (actions, softmax(action_probs))
 
     error = 0.0

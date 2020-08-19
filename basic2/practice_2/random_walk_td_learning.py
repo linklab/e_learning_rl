@@ -34,8 +34,6 @@ def generate_initial_random_policy(env):
     return policy
 
 
-# @values: 현재의 상태 가치
-# @alpha: 스텝 사이즈
 def temporal_difference(env, policy, state_values, alpha=0.1, gamma=1.0):
     env.reset()
 
@@ -57,7 +55,7 @@ def temporal_difference(env, policy, state_values, alpha=0.1, gamma=1.0):
 
 # TD(0)를 활용한 상태 가치 추정
 def compute_state_values(env):
-    episodes = [3, 10, 100]
+    max_episodes = [3, 10, 100]
     markers = ['o', '+', 'D']
     plt.figure()
     plt.plot(
@@ -66,13 +64,13 @@ def compute_state_values(env):
     )
 
     policy = generate_initial_random_policy(env)
-    for i in range(len(episodes)):
+    for i in range(len(max_episodes)):
         state_values = VALUES.copy()
-        for _ in range(episodes[i]):
+        for _ in range(max_episodes[i]):
             temporal_difference(env, policy, state_values)
         plt.plot(
             ['A', 'B', 'C', 'D', 'E'],
-            state_values, label=str(episodes[i]) + ' episodes', marker=markers[i-1]
+            state_values, label=str(max_episodes[i]) + ' episodes', marker=markers[i-1]
         )
 
     plt.plot(

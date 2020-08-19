@@ -138,9 +138,8 @@ class PolicyIteration:
         optimal_policy = dict()
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
-                max_ = np.max(self.policy[i, j, :])
-                arg_max_ = np.nonzero(self.policy[i, j, :] == max_)
-                indices = arg_max_[0]
+                indices = [idx for idx, value_ in enumerate(self.policy[i, j, :]) if
+                           value_ == np.max(self.policy[i, j, :])]
                 optimal_policy[(i, j)] = indices
 
         return optimal_policy

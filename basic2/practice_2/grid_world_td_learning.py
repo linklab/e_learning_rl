@@ -43,8 +43,6 @@ def get_exploring_start_state():
     return (i, j)
 
 
-# @values: 현재의 상태 가치
-# @alpha: 스텝 사이즈
 def temporal_difference(env, policy, state_values, alpha=0.1):
     env.reset()
 
@@ -70,8 +68,8 @@ def compute_state_values(env, alpha):
     policy = generate_initial_random_policy(env)
 
     state_values = generate_initial_state_values()
-    num_episodes = 300
-    for _ in range(num_episodes):
+    max_episodes = 300
+    for _ in range(max_episodes):
         temporal_difference(env, policy, state_values, alpha)
 
     draw_grid_world_state_values_image(
@@ -79,8 +77,8 @@ def compute_state_values(env, alpha):
     )
 
     state_values = generate_initial_state_values()
-    num_episodes = 3000
-    for _ in range(num_episodes):
+    max_episodes = 3000
+    for _ in range(max_episodes):
         temporal_difference(env, policy, state_values, alpha)
 
     draw_grid_world_state_values_image(
@@ -88,8 +86,8 @@ def compute_state_values(env, alpha):
     )
 
     state_values = generate_initial_state_values()
-    num_episodes = 10000
-    for _ in range(num_episodes):
+    max_episodes = 10000
+    for _ in range(max_episodes):
         temporal_difference(env, policy, state_values, alpha)
 
     draw_grid_world_state_values_image(

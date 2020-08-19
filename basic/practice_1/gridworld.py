@@ -77,7 +77,6 @@ class GridWorld(gym.Env):
         self.terminal_reward = terminal_reward
         self.outward_reward = outward_reward
 
-
         self.current_state = None
 
     def reset(self):

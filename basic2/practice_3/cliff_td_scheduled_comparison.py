@@ -11,9 +11,6 @@ GRID_WIDTH = 12
 
 NUM_ACTIONS = 4
 
-# 탐색 확률
-EPSILON = 0.1
-
 # 스텝 사이즈
 ALPHA = 0.5
 
@@ -26,6 +23,16 @@ TERMINAL_STATES = [(3, 11)]
 CLIFF_STATES = [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (3, 10)]
 
 MAX_EPISODES = 500
+
+INITIAL_EPSILON = 0.1
+FINAL_EPSILON = 0.01
+LAST_SCHEDULED_EPISODES = 350
+
+
+def epsilon_scheduled(current_episode):
+    fraction = min(current_episode / LAST_SCHEDULED_EPISODES, 1.0)
+    epsilon = min(INITIAL_EPSILON + fraction * (FINAL_EPSILON - INITIAL_EPSILON), INITIAL_EPSILON)
+    return epsilon
 
 
 # 비어있는 행동 가치 함수를 0으로 초기화하며 생성함
@@ -60,27 +67,30 @@ def generate_initial_random_policy(env):
 
 
 # epsilon-탐욕적 정책 갱신
-def update_epsilon_greedy_policy(env, state, q_value, policy):
+def update_epsilon_greedy_policy(env, state, q_value, policy, current_episode):
     max_prob_actions = [action_ for action_, value_ in enumerate(q_value[state[0], state[1], :]) if
                         value_ == np.max(q_value[state[0], state[1], :])]
 
     actions = []
     action_probs = []
+
+    epsilon = epsilon_scheduled(current_episode)
+
     for action in env.action_space.ACTIONS:
         actions.append(action)
         if action in max_prob_actions:
             action_probs.append(
-                (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.action_space.NUM_ACTIONS
+                (1 - epsilon) / len(max_prob_actions) + epsilon / env.action_space.NUM_ACTIONS
             )
         else:
             action_probs.append(
-                EPSILON / env.action_space.NUM_ACTIONS
+                epsilon / env.action_space.NUM_ACTIONS
             )
 
     policy[state] = (actions, action_probs)
 
 
-def sarsa(env, q_value, policy, step_size=ALPHA):
+def sarsa(env, q_value, policy, current_episode, step_size=ALPHA):
     env.reset()
 
     episode_reward = 0.0
@@ -95,13 +105,13 @@ def sarsa(env, q_value, policy, step_size=ALPHA):
         # Q-테이블 갱신
         if done:
             q_value[state[0], state[1], action] += step_size * (reward - q_value[state[0], state[1], action])
-            update_epsilon_greedy_policy(env, state, q_value, policy)
+            update_epsilon_greedy_policy(env, state, q_value, policy, current_episode)
         else:
             next_actions, prob = policy[next_state]
             next_action = np.random.choice(next_actions, size=1, p=prob)[0]
             next_q = q_value[next_state[0], next_state[1], next_action]
             q_value[state[0], state[1], action] += step_size * (reward + GAMMA * next_q - q_value[state[0], state[1], action])
-            update_epsilon_greedy_policy(env, state, q_value, policy)
+            update_epsilon_greedy_policy(env, state, q_value, policy, current_episode)
 
             state = next_state
             action = next_action
@@ -109,7 +119,7 @@ def sarsa(env, q_value, policy, step_size=ALPHA):
     return episode_reward
 
 
-def q_learning(env, q_value, policy, step_size=ALPHA):
+def q_learning(env, q_value, policy, current_episode, step_size=ALPHA):
     env.reset()
 
     episode_reward = 0.0
@@ -125,20 +135,20 @@ def q_learning(env, q_value, policy, step_size=ALPHA):
         # Q-테이블 갱신
         if done:
             q_value[state[0], state[1], action] += step_size * (reward - q_value[state[0], state[1], action])
-            update_epsilon_greedy_policy(env, state, q_value, policy)
+            update_epsilon_greedy_policy(env, state, q_value, policy, current_episode)
         else:
             # 새로운 상태에 대한 기대값 계산
             max_next_q = np.max(q_value[next_state[0], next_state[1], :])
             q_value[state[0], state[1], action] += step_size * (reward + GAMMA * max_next_q - q_value[state[0], state[1], action])
 
-            update_epsilon_greedy_policy(env, state, q_value, policy)
+            update_epsilon_greedy_policy(env, state, q_value, policy, current_episode)
 
             state = next_state
 
     return episode_reward
 
 
-def expected_sarsa(env, q_value, policy, step_size=ALPHA):
+def expected_sarsa(env, q_value, policy, current_episode, step_size=ALPHA):
     env.reset()
 
     episode_reward = 0.0
@@ -153,7 +163,7 @@ def expected_sarsa(env, q_value, policy, step_size=ALPHA):
         # Q-테이블 갱신
         if done:
             q_value[state[0], state[1], action] += step_size * (reward - q_value[state[0], state[1], action])
-            update_epsilon_greedy_policy(env, state, q_value, policy)
+            update_epsilon_greedy_policy(env, state, q_value, policy, current_episode)
         else:
             # 새로운 상태에 대한 기대값 계산
             expected_next_q = 0.0
@@ -163,7 +173,7 @@ def expected_sarsa(env, q_value, policy, step_size=ALPHA):
 
             q_value[state[0], state[1], action] += step_size * (reward + GAMMA * expected_next_q - q_value[state[0], state[1], action])
 
-            update_epsilon_greedy_policy(env, state, q_value, policy)
+            update_epsilon_greedy_policy(env, state, q_value, policy, current_episode)
 
             state = next_state
 
@@ -226,9 +236,9 @@ def td_comparison(env):
         policy_expected_sarsa = generate_initial_random_policy(env)
 
         for episode in range(MAX_EPISODES):
-            rewards_sarsa[episode] += sarsa(env, q_table_sarsa, policy_sarsa)
-            rewards_q_learning[episode] += q_learning(env, q_table_q_learning, policy_q_learning)
-            rewards_expected_sarsa[episode] += expected_sarsa(env, q_table_expected_sarsa, policy_expected_sarsa)
+            rewards_sarsa[episode] += sarsa(env, q_table_sarsa, policy_sarsa, episode)
+            rewards_q_learning[episode] += q_learning(env, q_table_q_learning, policy_q_learning, episode)
+            rewards_expected_sarsa[episode] += expected_sarsa(env, q_table_expected_sarsa, policy_expected_sarsa, episode)
 
     # 50번의 수행에 대해 평균 계산
     rewards_expected_sarsa /= runs
@@ -245,7 +255,7 @@ def td_comparison(env):
     plt.ylim([-100, 0])
     plt.legend()
 
-    plt.savefig('images/cliff_td_comparison.png')
+    plt.savefig('images/cliff_td_scheduled_comparison.png')
     plt.close()
 
     # display optimal policy

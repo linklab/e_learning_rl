@@ -51,7 +51,6 @@ def first_visit_mc_prediction(env, gamma, num_iter):
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
             for action in env.action_space.ACTIONS:
-                state_action_values[i, j, action] = 0.0
                 returns[((i, j), action)] = list()
 
     for i in range(num_iter):
@@ -81,7 +80,6 @@ def every_visit_mc_prediction(env, gamma, num_iter):
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
             for action in env.action_space.ACTIONS:
-                state_action_values[i, j, action] = 0.0
                 returns[((i, j), action)] = list()
 
     for i in range(num_iter):

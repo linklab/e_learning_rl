@@ -50,9 +50,8 @@ def calculate_optimal_policy(optimal_action_value):
     optimal_policy = dict()
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
-            max_ = np.max(optimal_action_value[i, j, :])
-            arg_max_ = np.nonzero(optimal_action_value[i, j, :] == max_)
-            indices = arg_max_[0]
+            indices = [idx for idx, value_ in enumerate(optimal_action_value[i, j, :]) if
+                       value_ == np.max(optimal_action_value[i, j, :])]
             optimal_policy[(i, j)] = indices
 
     return optimal_policy
