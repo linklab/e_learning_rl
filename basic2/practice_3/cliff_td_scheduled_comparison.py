@@ -35,7 +35,7 @@ def epsilon_scheduled(current_episode):
     return epsilon
 
 
-# 비어있는 행동 가치 함수를 0으로 초기화하며 생성함
+# 비어있는 행동 가치 함수를 0~1 사이의 임의의 값으로 초기화하며 생성함
 def generate_initial_q_value(env):
     q_value = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
 
@@ -91,10 +91,8 @@ def update_epsilon_greedy_policy(env, state, q_value, policy, current_episode):
 
 
 def sarsa(env, q_value, policy, current_episode, step_size=ALPHA):
-    env.reset()
-
     episode_reward = 0.0
-    state = START_STATE
+    state = env.reset()
     actions, prob = policy[state]
     action = np.random.choice(actions, size=1, p=prob)[0]
     done = False
@@ -120,10 +118,8 @@ def sarsa(env, q_value, policy, current_episode, step_size=ALPHA):
 
 
 def q_learning(env, q_value, policy, current_episode, step_size=ALPHA):
-    env.reset()
-
     episode_reward = 0.0
-    state = START_STATE
+    state = env.reset()
     done = False
     while not done:
         actions, prob = policy[state]
@@ -149,10 +145,8 @@ def q_learning(env, q_value, policy, current_episode, step_size=ALPHA):
 
 
 def expected_sarsa(env, q_value, policy, current_episode, step_size=ALPHA):
-    env.reset()
-
     episode_reward = 0.0
-    state = START_STATE
+    state = env.reset()
     done = False
     while not done:
         actions, prob = policy[state]

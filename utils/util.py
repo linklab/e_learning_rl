@@ -213,3 +213,35 @@ def draw_random_walk_policy_image(policy, env):
     print(randomwalk_str)
 
 
+# 행동 가치함수를 표 형태로 그리는 함수
+def draw_q_value_image_for_maze(env, q_value, run, planning_steps, episode):
+    # 축 표시 제거, 크기 조절 등 이미지 그리기 이전 설정 작업
+    fig, axis = plt.subplots()
+    axis.set_axis_off()
+    table = Table(axis, bbox=[0, 0, 1, 1])
+
+    num_rows, num_cols = env.MAZE_HEIGHT, env.MAZE_WIDTH
+    width, height = 1.0 / num_cols, 1.0 / num_rows
+
+    for i in range(env.MAZE_HEIGHT):
+        for j in range(env.MAZE_WIDTH):
+            if np.sum(q_value[i][j]) == 0.0:
+                symbol = " "
+            else:
+                action_idx = np.argmax(q_value[i][j])
+                symbol = env.action_space.ACTION_SYMBOLS[action_idx]
+            table.add_cell(i, j, width, height, text=symbol, loc='center', facecolor='white')
+
+    # 행, 열 라벨 추가
+    for i in range(env.MAZE_HEIGHT):
+        table.add_cell(i, -1, width, height, text=i, loc='right', edgecolor='none', facecolor='none')
+
+    for j in range(env.MAZE_WIDTH):
+        table.add_cell(-1, j, width, height/2, text=j, loc='center', edgecolor='none', facecolor='none')
+
+    for key, cell in table.get_celld().items():
+         cell.get_text().set_fontsize(20)
+
+    axis.add_table(table)
+    plt.savefig('images/maze_action_values_{0}_{1}_{2}.png'.format(run, planning_steps, episode))
+    plt.close()

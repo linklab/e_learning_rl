@@ -35,10 +35,8 @@ def generate_initial_random_policy(env):
 
 
 def temporal_difference(env, policy, state_values, alpha=0.1, gamma=1.0):
-    env.reset()
-
     done = False
-    state = env.current_state
+    state = env.reset()
 
     while not done:
         actions, prob = policy[state]

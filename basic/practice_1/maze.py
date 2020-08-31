@@ -44,9 +44,6 @@ class Maze(gym.Env):
             (5, 7), (5, 8)
         ]
 
-        # Q 가치의 크기
-        self.q_size = (self.MAZE_HEIGHT, self.MAZE_WIDTH, len(self.action_space.ACTIONS))
-
         # 최대 타임 스텝
         self.max_steps = float('inf')
 

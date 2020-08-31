@@ -39,10 +39,8 @@ def generate_initial_random_policy(env):
 # @values: 현재의 상태 가치
 # @alpha: 스텝 사이즈
 def temporal_difference(env, policy, state_values, alpha=0.1, gamma=1.0):
-    env.reset()
-
     done = False
-    state = env.current_state
+    state = env.reset()
 
     while not done:
         actions, prob = policy[state]
@@ -62,8 +60,7 @@ def generate_random_episode(env, policy):
     episode = []
     visited_states = []
 
-    env.reset()
-    state = env.current_state
+    state = env.reset()
     done = False
 
     while not done:
