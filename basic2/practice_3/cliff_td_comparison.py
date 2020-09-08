@@ -268,7 +268,7 @@ if __name__ == '__main__':
         transition_reward=-1.0,
         terminal_reward=-1.0,
         outward_reward=-1.0,
-        warm_hole_states=[(s, START_STATE, -100.0) for s in CLIFF_STATES]
+        cliff_states=[(s, START_STATE, -100.0) for s in CLIFF_STATES]
     )
 
     td_comparison(env)
