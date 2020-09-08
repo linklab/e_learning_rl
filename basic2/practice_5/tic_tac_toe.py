@@ -1,7 +1,5 @@
 import random
 import time
-
-import gym
 import numpy as np
 
 PLAYER_TO_SYMBOL = ['*', 'O', 'X']
@@ -11,6 +9,19 @@ BOARD_ROWS = 3
 BOARD_COLS = 3
 
 
+def map_position_to_idx(row_idx, col_idx):
+    for i in range(BOARD_ROWS):
+        for j in range(BOARD_COLS):
+            if row_idx == i and col_idx == j:
+                return (2 - i) * 3 + j + 1
+
+def map_idx_to_position(idx):
+    i, j = divmod(idx, 3)
+    i = 2 - i if j != 0 else 3 - i
+    j = j - 1 if j != 0 else 2
+    return (i, j)
+
+8
 ################################################################
 # 플레이어 1,2 간의 게임 진행을 담당하는 Env 클래스
 class TicTacToe:
@@ -100,6 +111,18 @@ class TicTacToe:
         new_state.data[i, j] = player_int
 
         return new_state
+
+    def print_board_idx(self):
+        print()
+        print("[[[Tic-Tac-Toe 보드 내 각 셀을 선택할 때 다음 숫자 키패드를 사용하세요.]]]")
+        for i in range(BOARD_ROWS):
+            print('-------------')
+            out = '| '
+            for j in range(BOARD_COLS):
+                out += str(map_position_to_idx(i, j)) + ' | '
+            print(out)
+        print('-------------')
+
 
 
 #########################################################
@@ -210,8 +233,9 @@ class State:
 
 
 class Dummy_Agent:
-    def __init__(self, name):
+    def __init__(self, name, env):
         self.name = name
+        self.env = env
 
     def get_action(self, state):
         available_positions = state.get_available_positions()
@@ -220,12 +244,12 @@ class Dummy_Agent:
 
 
 def main():
-    player_1 = Dummy_Agent(name="PLAYER_1")
-    player_2 = Dummy_Agent(name="PLAYER_2")
-
     env = TicTacToe()
     state = env.reset()
     env.render()
+
+    player_1 = Dummy_Agent(name="PLAYER_1", env=env)
+    player_2 = Dummy_Agent(name="PLAYER_2", env=env)
 
     current_player = player_1
 
