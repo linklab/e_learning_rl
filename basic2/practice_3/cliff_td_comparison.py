@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import random
 
-from basic.practice_1.gridworld import GridWorld
+from basic.practice_1.cliff import CliffGridWorld
 
 # 그리드월드 높이와 너비
 GRID_HEIGHT = 4
@@ -260,7 +260,7 @@ if __name__ == '__main__':
     if not os.path.exists('images/'):
         os.makedirs('images/')
 
-    env = GridWorld(
+    env = CliffGridWorld(
         height=GRID_HEIGHT,
         width=GRID_WIDTH,
         start_state=START_STATE,
