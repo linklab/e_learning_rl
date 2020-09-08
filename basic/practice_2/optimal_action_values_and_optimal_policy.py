@@ -21,7 +21,7 @@ B_PRIME_POSITION = (2, 3)   # 상태 B에서 행동시 도착할 위치 좌표
 def calculate_grid_world_optimal_action_values(env):
     action_value_function = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
 
-    # 행동 가치 함수의 값들이 수렴할 때까지 반복
+    # 행동 가치 테이블의 값들이 수렴할 때까지 반복
     while True:
         # action_value_function과 동일한 형태를 가지면서 값은 모두 0인 배열을 new_action_value_function에 저장
         new_action_value_function = np.zeros_like(action_value_function)
@@ -37,7 +37,7 @@ def calculate_grid_world_optimal_action_values(env):
                     new_action_value_function[i, j, action] = \
                         prob * (reward + DISCOUNT_RATE * np.max(action_value_function[next_i, next_j, :]))
 
-        # 행동 가치 함수 수렴 여부 판단
+        # 행동 가치 테이블 수렴 여부 판단
         if np.sum(np.abs(new_action_value_function - action_value_function)) < 1e-4:
             break
 

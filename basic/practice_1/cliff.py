@@ -1,10 +1,7 @@
 import time
 
-import gym
 
-
-
-class CliffGridWorld(gym.Env):
+class CliffGridWorld():
     def __init__(
             self,
             height=4, width=12,         # 격자판의 크기

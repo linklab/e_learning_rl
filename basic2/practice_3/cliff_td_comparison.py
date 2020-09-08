@@ -31,7 +31,7 @@ MAX_EPISODES = 500
 # 총 실험 횟수 (성능에 대한 평균을 구하기 위함)
 TOTAL_RUNS = 25
 
-# 비어있는 행동 가치 함수를 0~1 사이의 임의의 값으로 초기화하며 생성함
+# 비어있는 행동 가치 테이블을 0~1 사이의 임의의 값으로 초기화하며 생성함
 def generate_initial_q_value(env):
     q_value = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
 
@@ -52,12 +52,12 @@ def generate_initial_random_policy(env):
         for j in range(GRID_WIDTH):
             if (i, j) not in TERMINAL_STATES:
                 actions = []
-                prob = []
+                action_probs = []
                 for action in env.action_space.ACTIONS:
                     actions.append(action)
-                    prob.append(0.25)
+                    action_probs.append(0.25)
 
-                policy[(i, j)] = (actions, prob)
+                policy[(i, j)] = (actions, action_probs)
 
     return policy
 

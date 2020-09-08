@@ -40,7 +40,7 @@ def epsilon_scheduled(current_episode):
     return epsilon
 
 
-# 비어있는 행동 가치 함수를 0~1 사이의 임의의 값으로 초기화하며 생성함
+# 비어있는 행동 가치 테이블을 0~1 사이의 임의의 값으로 초기화하며 생성함
 def generate_initial_q_value(env):
     q_value = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
 
