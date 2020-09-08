@@ -2,25 +2,18 @@ import time
 
 import gym
 
-# -------------------------------
-# |(0,0)|(0,1)|(0,2)|(0,3)|(0,4)|
-# |(1,0)|(1,1)|(1,2)|(1,3)|(1,4)|
-# |(2,0)|(2,1)|(2,2)|(2,3)|(2,4)|
-# |(3,0)|(3,1)|(3,2)|(3,3)|(3,4)|
-# |(4,0)|(4,1)|(4,2)|(4,3)|(4,4)|
-# -------------------------------
 
 
-class GridWorld(gym.Env):
+class CliffGridWorld(gym.Env):
     def __init__(
             self,
-            height=5, width=5,        # 격자판의 크기
-            start_state=(0, 0),       # 시작 상태
-            terminal_states=[(4, 4)], # 종료 상태
-            transition_reward=0.0,    # 일반적인 상태 전이 보상
-            terminal_reward=1.0,      # 종료 상태로 이동하는 행동 수행 시 받는 보상
-            outward_reward=0.0,      # 미로 바깥으로 이동하는 행동 수행 시 받는 보상 (이동하지 않고 제자리 유지)
-            warm_hole_states=None     # 윔홀 정의
+            height=4, width=12,         # 격자판의 크기
+            start_state=(3, 0),         # 시작 상태
+            terminal_states=[(3, 11)],  # 종료 상태
+            transition_reward=-1.0,     # 일반적인 상태 전이 보상
+            terminal_reward=1.0,        # 종료 상태로 이동하는 행동 수행 시 받는 보상
+            outward_reward=-1.0,        # 미로 바깥으로 이동하는 행동 수행 시 받는 보상 (이동하지 않고 제자리 유지)
+            cliff_states=None           # 절벽 상태
     ):
         self.__version__ = "0.0.1"
 
@@ -67,7 +60,10 @@ class GridWorld(gym.Env):
         self.observation_space.TERMINAL_STATES = terminal_states
 
         # 웜홀 상태 위치
-        self.observation_space.WARM_HOLE_STATES = warm_hole_states
+        self.observation_space.CLIFF_STATES = cliff_states
+
+        # 최대 타임 스텝
+        self.max_steps = float('inf')
 
         self.transition_reward = transition_reward
 
@@ -83,39 +79,39 @@ class GridWorld(gym.Env):
     def moveto(self, state):
         self.current_state = state
 
-    def is_warm_hole_state(self, state):
+    def is_cliff_state(self, state):
         i, j = state
 
-        if self.observation_space.WARM_HOLE_STATES is not None and len(self.observation_space.WARM_HOLE_STATES) > 0:
-            for warm_hole_info in self.observation_space.WARM_HOLE_STATES:
-                warm_hole_state = warm_hole_info[0]
-                if i == warm_hole_state[0] and j == warm_hole_state[1]:
+        if self.observation_space.CLIFF_STATES is not None and len(self.observation_space.CLIFF_STATES) > 0:
+            for cliff_info in self.observation_space.CLIFF_STATES:
+                cliff_state = cliff_info[0]
+                if i == cliff_state[0] and j == cliff_state[1]:
                     return True
         return False
 
-    def get_next_state_warm_hole(self, state):
+    def get_next_state_cliff(self, state):
         i, j = state
         next_state = None
 
-        for warm_hole_info in self.observation_space.WARM_HOLE_STATES:
-            warm_hole_state = warm_hole_info[0]
-            warm_hole_prime_state = warm_hole_info[1]
+        for cliff_info in self.observation_space.CLIFF_STATES:
+            cliff_state = cliff_info[0]
+            cliff_prime_state = cliff_info[1]
 
-            if i == warm_hole_state[0] and j == warm_hole_state[1]:
-                next_state = warm_hole_prime_state
+            if i == cliff_state[0] and j == cliff_state[1]:
+                next_state = cliff_prime_state
                 break
         return next_state
 
-    def get_reward_warm_hole(self, state):
+    def get_reward_cliff(self, state):
         i, j = state
         reward = None
 
-        for warm_hole_info in self.observation_space.WARM_HOLE_STATES:
-            warm_hole_state = warm_hole_info[0]
-            warm_hole_reward = warm_hole_info[2]
+        for cliff_info in self.observation_space.CLIFF_STATES:
+            cliff_state = cliff_info[0]
+            cliff_reward = cliff_info[2]
 
-            if i == warm_hole_state[0] and j == warm_hole_state[1]:
-                reward = warm_hole_reward
+            if i == cliff_state[0] and j == cliff_state[1]:
+                reward = cliff_reward
                 break
 
         return reward
@@ -123,8 +119,8 @@ class GridWorld(gym.Env):
     def get_next_state(self, state, action):
         i, j = state
 
-        if self.is_warm_hole_state(state):
-            next_state = self.get_next_state_warm_hole(state)
+        if self.is_cliff_state(state):
+            next_state = self.get_next_state_cliff(state)
             next_i = next_state[0]
             next_j = next_state[1]
         elif (i, j) in self.observation_space.TERMINAL_STATES:
@@ -152,8 +148,8 @@ class GridWorld(gym.Env):
         i, j = state
         next_i, next_j = next_state
 
-        if self.is_warm_hole_state(state):
-            reward = self.get_reward_warm_hole(state)
+        if self.is_cliff_state(state):
+            reward = self.get_reward_cliff(state)
         else:
             if (next_i, next_j) in self.observation_space.TERMINAL_STATES:
                 reward = self.terminal_reward
@@ -195,62 +191,49 @@ class GridWorld(gym.Env):
     def __str__(self):
         gridworld_str = ""
         for i in range(self.HEIGHT):
-            gridworld_str += "-------------------------------\n"
+            gridworld_str += "-" * 99 + "\n"
 
             for j in range(self.WIDTH):
                 if self.current_state[0] == i and self.current_state[1] == j:
-                    gridworld_str += "|  {0}  ".format("*")
+                    gridworld_str += "|   {0}   ".format("*")
                 elif (i, j) == self.observation_space.START_STATE:
-                    gridworld_str += "|  {0}  ".format("S")
+                    gridworld_str += "|   {0}   ".format("S")
                 elif (i, j) in self.observation_space.TERMINAL_STATES:
-                    gridworld_str += "|  {0}  ".format("G")
-                elif self.observation_space.WARM_HOLE_STATES and (i, j) in [state[0] for state in self.observation_space.WARM_HOLE_STATES]:
-                    gridworld_str += "|  {0}  ".format("W")
+                    gridworld_str += "|   {0}   ".format("G") if j < 10 else "|   {0}    ".format("G")
+                elif self.observation_space.CLIFF_STATES and (i, j) in [state[0] for state in self.observation_space.CLIFF_STATES]:
+                    gridworld_str += "|   {0}   ".format("W") if j < 10 else "|   {0}    ".format("W")
                 else:
-                    gridworld_str += "|     "
+                    gridworld_str += "|       " if j < 10 else "|        "
             gridworld_str += "|\n"
 
             for j in range(self.WIDTH):
-                gridworld_str += "|({0},{1})".format(i, j)
+                gridworld_str += "| ({0},{1}) ".format(i, j)
 
             gridworld_str += "|\n"
 
-        gridworld_str += "-------------------------------\n"
+        gridworld_str += "-" * 99 + "\n"
         return gridworld_str
 
 
-def main():
-    env = GridWorld()
-    env.reset()
-    print("reset")
-    env.render()
+def main_cliff_gridworld():
+    # 그리드월드 높이와 너비
+    GRID_HEIGHT = 4
+    GRID_WIDTH = 12
 
-    done = False
-    total_steps = 0
-    while not done:
-        total_steps += 1
-        action = env.action_space.sample()
-        next_state, reward, done, _ = env.step(action)
-        print("action: {0}, reward: {1}, done: {2}, total_steps: {3}".format(
-            env.action_space.ACTION_SYMBOLS[action],
-            reward, done, total_steps
-        ))
-        env.render()
-        time.sleep(3)
+    # 초기 상태와 종료 상태
+    START_STATE = (3, 0)
+    TERMINAL_STATES = [(3, 11)]
+    CLIFF_STATES = [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (3, 10)]
 
-
-def main_warm_hole():
-    A_POSITION = (0, 1)  # 임의로 지정한 특별한 상태 A 좌표
-    B_POSITION = (0, 3)  # 임의로 지정한 특별한 상태 B 좌표
-
-    A_PRIME_POSITION = (4, 1)  # 상태 A에서 임의의 행동시 도착할 위치 좌표
-    B_PRIME_POSITION = (2, 3)  # 상태 B에서 임의의 행동시 도착할 위치 좌표
-
-    env = GridWorld(
-        warm_hole_states=[
-            (A_POSITION, A_PRIME_POSITION, 10.0),
-            (B_POSITION, B_PRIME_POSITION, 5.0)
-        ]
+    env = CliffGridWorld(
+        height=GRID_HEIGHT,
+        width=GRID_WIDTH,
+        start_state=START_STATE,
+        terminal_states=TERMINAL_STATES,
+        transition_reward=-1.0,
+        terminal_reward=-1.0,
+        outward_reward=-1.0,
+        cliff_states=[(s, START_STATE, -100.0) for s in CLIFF_STATES]
     )
 
     env.reset()
@@ -272,5 +255,4 @@ def main_warm_hole():
 
 
 if __name__ == "__main__":
-    main()
-    #main_warm_hole()
+    main_cliff_gridworld()
