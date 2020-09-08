@@ -40,9 +40,6 @@ class RandomWalk(gym.Env):
         # 시작 상태 위치
         self.observation_space.START_STATE = self.observation_space.STATES[int(num_internal_states / 2)]
 
-        # 최대 타임 스텝
-        self.max_steps = float('inf')
-
         self.transition_reward = transition_reward
 
         self.left_terminal_reward = left_terminal_reward

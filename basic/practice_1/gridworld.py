@@ -69,9 +69,6 @@ class GridWorld(gym.Env):
         # 웜홀 상태 위치
         self.observation_space.WARM_HOLE_STATES = warm_hole_states
 
-        # 최대 타임 스텝
-        self.max_steps = float('inf')
-
         self.transition_reward = transition_reward
 
         self.terminal_reward = terminal_reward
