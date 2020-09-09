@@ -5,7 +5,7 @@ import numpy as np
 
 from basic2.practice_5.tic_tac_toe import map_idx_to_position
 
-ALPHA = 0.2
+ALPHA = 0.01
 
 # 감가율
 GAMMA = 1.0
@@ -37,7 +37,7 @@ class Human_Agent:
         return action
 
 
-class DQN_Agent:
+class Q_Learning_Agent:
     def __init__(self, name, env):
         self.name = name
         self.env = env
@@ -52,7 +52,7 @@ class DQN_Agent:
             q_table[state_identifier] = {}
             available_positions = self.env.ALL_STATES[state_identifier].get_available_positions()
             for available_position in available_positions:
-                q_table[state_identifier][available_position] = random.random()
+                q_table[state_identifier][available_position] = 0.0
 
         return q_table
 
@@ -131,3 +131,10 @@ class DQN_Agent:
 
     def print_q_table_one(self, state):
         print(state.identifier(), list(self.q_table[state.identifier()].values()))
+
+    def num_valid_state(self):
+        num_valid_state = 0
+        for state_identifier in self.env.ALL_STATES:
+            if len(self.q_table[state_identifier].values()) != 0.0:
+                num_valid_state += 1
+        return num_valid_state

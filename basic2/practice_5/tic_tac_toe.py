@@ -2,9 +2,11 @@ import random
 import time
 import numpy as np
 
+from basic2.practice_5.tic_tac_toe_dummy_agents import Dummy_Agent
+
 PLAYER_TO_SYMBOL = ['*', 'O', 'X']
-PLAYER_1 = 1
-PLAYER_2 = -1
+PLAYER_1_INT = 1
+PLAYER_2_INT = -1
 BOARD_ROWS = 3
 BOARD_COLS = 3
 
@@ -28,18 +30,18 @@ class TicTacToe:
     def __init__(self):
         self.BOARD_SIZE = BOARD_ROWS * BOARD_COLS
         self.current_state = None
-        self.current_player_int = None
+        self.current_agent_int = None
 
         self.INITIAL_STATE = State()
 
         self.ALL_STATES = {}
         self.ALL_STATES[self.INITIAL_STATE.identifier()] = self.INITIAL_STATE
 
-        self.generate_all_states(state=self.INITIAL_STATE, player_int=PLAYER_1)
+        self.generate_all_states(state=self.INITIAL_STATE, player_int=PLAYER_1_INT)
         print("####### Tic-Tac-Toe Env Initialized with {0} States #######".format(len(self.ALL_STATES)))
 
     def reset(self):
-        self.current_player_int = PLAYER_1
+        self.current_agent_int = PLAYER_1_INT
         self.current_state = self.INITIAL_STATE
         return self.current_state
 
@@ -47,7 +49,7 @@ class TicTacToe:
     def step(self, action=None):
         # 플레이어의 행동에 의한 다음 상태 갱신
         next_state = self.get_new_state(
-            i=action[0], j=action[1], state_data=self.current_state.data, player_int=self.current_player_int
+            i=action[0], j=action[1], state_data=self.current_state.data, player_int=self.current_agent_int
         )
 
         next_state_hash = next_state.identifier()
@@ -58,23 +60,23 @@ class TicTacToe:
         done = next_state.is_end_state()
 
         if done:
-            info = {'current_player_int': self.current_player_int, 'winner': next_state.winner}
-            if next_state.winner == PLAYER_1:
+            info = {'current_agent_int': self.current_agent_int, 'winner': next_state.winner}
+            if next_state.winner == PLAYER_1_INT:
                 reward = 1.0
-            elif next_state.winner == PLAYER_2:
+            elif next_state.winner == PLAYER_2_INT:
                 reward = -1.0
             else:
                 reward = 0.0
         else:
-            info = {'current_player_int': self.current_player_int}
+            info = {'current_agent_int': self.current_agent_int}
             reward = 0.0
 
         self.current_state = next_state
 
-        if self.current_player_int == PLAYER_1:
-            self.current_player_int = PLAYER_2
+        if self.current_agent_int == PLAYER_1_INT:
+            self.current_agent_int = PLAYER_2_INT
         else:
-            self.current_player_int = PLAYER_1
+            self.current_agent_int = PLAYER_1_INT
 
         return next_state, reward, done, info
 
@@ -199,9 +201,9 @@ class State:
             if result == 3 or result == -3:
                 self.end = True
                 if result == 3:
-                    self.winner = PLAYER_1
+                    self.winner = PLAYER_1_INT
                 else:
-                    self.winner = PLAYER_2
+                    self.winner = PLAYER_2_INT
                 return self.end
 
         # 무승부 확인
@@ -232,45 +234,35 @@ class State:
         print('-------------')
 
 
-class Dummy_Agent:
-    def __init__(self, name, env):
-        self.name = name
-        self.env = env
-
-    def get_action(self, state):
-        available_positions = state.get_available_positions()
-        action = random.choice(available_positions)
-        return action
-
 
 def main():
     env = TicTacToe()
     state = env.reset()
     env.render()
 
-    player_1 = Dummy_Agent(name="PLAYER_1", env=env)
-    player_2 = Dummy_Agent(name="PLAYER_2", env=env)
+    agent_1 = Dummy_Agent(name="AGENT_1", env=env)
+    agent_2 = Dummy_Agent(name="AGENT_2", env=env)
 
-    current_player = player_1
+    current_agent = agent_1
 
     done = False
     total_steps = 0
     while not done:
         total_steps += 1
-        action = current_player.get_action(state)
+        action = current_agent.get_action(state)
         next_state, reward, done, info = env.step(action)
         print("[{0}] action: {1}, reward: {2}, done: {3}, info: {4}, total_steps: {5}".format(
-            current_player.name, action, reward, done, info, total_steps
+            current_agent.name, action, reward, done, info, total_steps
         ))
         env.render()
 
         state = next_state
         time.sleep(2)
 
-        if current_player == player_1:
-            current_player = player_2
+        if current_agent == agent_1:
+            current_agent = agent_2
         else:
-            current_player =player_1
+            current_agent =agent_1
 
 
 if __name__ == "__main__":
