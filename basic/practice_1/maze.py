@@ -44,9 +44,6 @@ class Maze(gym.Env):
             (5, 7), (5, 8)
         ]
 
-        # 최대 타임 스텝
-        self.max_steps = float('inf')
-
         self.current_state = None
 
     def reset(self):
@@ -81,7 +78,7 @@ class Maze(gym.Env):
         else:
             done = False
 
-        return reward, (x, y), done, None
+        return (x, y), reward, done, None
 
     def render(self):
         print(self.__str__())

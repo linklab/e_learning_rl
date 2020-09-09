@@ -4,7 +4,18 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-from basic.practice_1.maze import Maze
+from basic.practice_1.gridworld import GridWorld
+
+# 그리드월드 높이와 너비
+GRID_HEIGHT = 4
+GRID_WIDTH = 12
+
+NUM_ACTIONS = 4
+
+# 초기 상태와 종료 상태
+START_STATE = (3, 0)
+TERMINAL_STATES = [(3, 11)]
+CLIFF_STATES = [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (3, 10)]
 
 # 최대 에피소드
 MAX_EPISODES = 50
@@ -42,7 +53,7 @@ class EnvModel:
 
         self.model[state][action] = [reward, next_state]
 
-    # 저장해 둔 경험 샘플들에서 임으로 선택하여 반환
+    # 저장해 둔 경험 샘플들에서 임으로 선택하여 반환험
     def sample(self):
         state = random.choice(list(self.model.keys()))
         action = random.choice(list(self.model[state].keys()))
@@ -52,11 +63,11 @@ class EnvModel:
 
 # 비어있는 행동 가치 테이블을 0~1 사이의 임의의 값으로 초기화하며 생성함
 def generate_initial_q_value(env):
-    q_table = np.zeros((env.MAZE_HEIGHT, env.MAZE_WIDTH, env.action_space.NUM_ACTIONS))
+    q_table = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
 
-    for i in range(env.MAZE_HEIGHT):
-        for j in range(env.MAZE_WIDTH):
-            if (i, j) not in env.observation_space.GOAL_STATES:
+    for i in range(GRID_HEIGHT):
+        for j in range(GRID_WIDTH):
+            if (i, j) not in env.observation_space.TERMINAL_STATES:
                 for action in env.action_space.ACTIONS:
                     q_table[i, j, action] = random.random()
     return q_table
@@ -67,9 +78,9 @@ def generate_initial_q_value(env):
 def generate_initial_random_policy(env):
     policy = dict()
 
-    for i in range(env.MAZE_HEIGHT):
-        for j in range(env.MAZE_WIDTH):
-            if (i, j) not in env.observation_space.GOAL_STATES:
+    for i in range(GRID_HEIGHT):
+        for j in range(GRID_WIDTH):
+            if (i, j) not in env.observation_space.TERMINAL_STATES:
                 actions = []
                 prob = []
                 for action in env.action_space.ACTIONS:
@@ -146,7 +157,7 @@ def dyna_q(q_table, policy, env_model, env, episode, planning_repeat, step_size=
     return steps, rewards
 
 
-def maze_dyna_q(env):
+def cliff_dyna_q(env):
     planning_repeats = [0, 3, 30]
     performance_steps = np.zeros((len(planning_repeats), MAX_EPISODES))
 
@@ -174,7 +185,7 @@ def maze_dyna_q(env):
     plt.xlabel('Episode')
     plt.ylabel('Executed steps per episode')
     plt.legend()
-    plt.savefig('images/maze_dyna_q.png')
+    plt.savefig('images/cliff_dyna_q.png')
     plt.close()
 
 
@@ -183,8 +194,15 @@ if __name__ == '__main__':
     if not os.path.exists('images/'):
         os.makedirs('images/')
 
-    env = Maze()  # 미로 환경 객체 구성
-    env.reset()
-    print(env)
+    env = GridWorld(
+        height=GRID_HEIGHT,
+        width=GRID_WIDTH,
+        start_state=START_STATE,
+        terminal_states=TERMINAL_STATES,
+        transition_reward=-1.0,
+        terminal_reward=-1.0,
+        outward_reward=-1.0,
+        warm_hole_states=[(s, START_STATE, -100.0) for s in CLIFF_STATES]
+    )
 
-    maze_dyna_q(env)
+    cliff_dyna_q(env)

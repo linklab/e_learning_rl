@@ -25,10 +25,13 @@ START_STATE = (3, 0)
 TERMINAL_STATES = [(3, 11)]
 CLIFF_STATES = [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (3, 10)]
 
+# 최대 에피소드
 MAX_EPISODES = 500
 
+# 총 실험 횟수 (성능에 대한 평균을 구하기 위함)
+TOTAL_RUNS = 25
 
-# 비어있는 행동 가치 함수를 0~1 사이의 임의의 값으로 초기화하며 생성함
+# 비어있는 행동 가치 테이블을 0~1 사이의 임의의 값으로 초기화하며 생성함
 def generate_initial_q_value(env):
     q_value = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
 
@@ -49,12 +52,12 @@ def generate_initial_random_policy(env):
         for j in range(GRID_WIDTH):
             if (i, j) not in TERMINAL_STATES:
                 actions = []
-                prob = []
+                action_probs = []
                 for action in env.action_space.ACTIONS:
                     actions.append(action)
-                    prob.append(0.25)
+                    action_probs.append(0.25)
 
-                policy[(i, j)] = (actions, prob)
+                policy[(i, j)] = (actions, action_probs)
 
     return policy
 
@@ -194,9 +197,6 @@ def print_optimal_policy(env, q_value):
 
 
 def td_comparison(env):
-    # 25번의 실험
-    runs = 25
-
     rewards_expected_sarsa = np.zeros(MAX_EPISODES)
     rewards_sarsa = np.zeros(MAX_EPISODES)
     rewards_q_learning = np.zeros(MAX_EPISODES)
@@ -206,7 +206,7 @@ def td_comparison(env):
     q_table_q_learning = None
     q_table_expected_sarsa = None
 
-    for run in range(runs):
+    for run in range(TOTAL_RUNS):
         print("runs: {0}".format(run))
 
         # 초기 Q-Table 생성
@@ -224,10 +224,10 @@ def td_comparison(env):
             rewards_q_learning[episode] += q_learning(env, q_table_q_learning, policy_q_learning)
             rewards_expected_sarsa[episode] += expected_sarsa(env, q_table_expected_sarsa, policy_expected_sarsa)
 
-    # 50번의 수행에 대해 평균 계산
-    rewards_expected_sarsa /= runs
-    rewards_sarsa /= runs
-    rewards_q_learning /= runs
+    # 총 25번의 수행에 대해 평균 계산
+    rewards_sarsa /= TOTAL_RUNS
+    rewards_q_learning /= TOTAL_RUNS
+    rewards_expected_sarsa /= TOTAL_RUNS
 
     # 그래프 출력
     plt.plot(rewards_sarsa, linestyle='-', color='darkorange', label='SARSA')

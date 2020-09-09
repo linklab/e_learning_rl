@@ -12,7 +12,7 @@ MAX_EPISODES = 10000
 EPSILON = 0.1
 
 
-# 비어있는 행동 가치 함수를 0으로 초기화하며 생성함
+# 비어있는 행동 가치 테이블을 0으로 초기화하며 생성함
 def generate_initial_q_value_and_return(env):
     state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
     returns = dict()
