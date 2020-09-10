@@ -25,6 +25,9 @@ def play_with_agent_2():
 
     done = False
     while not done:
+        if current_player == agent_2:
+            agent_2.print_policy_one(state)
+
         action = current_player.get_action(state)
 
         next_state, _, done, info = env.step(action)

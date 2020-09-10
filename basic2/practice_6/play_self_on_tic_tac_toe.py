@@ -8,7 +8,7 @@ from basic2.practice_6.tic_tac_toe_q_learning import GameStatus, print_game_stat
 
 # 최대 반복 에피소드(게임) 횟수
 MAX_EPISODES = 100000
-VERBOSE = False
+VERBOSE = True
 
 
 def self_play():

@@ -66,7 +66,7 @@ class TicTacToe:
             elif next_state.winner == PLAYER_2_INT:
                 reward = -1.0
             else:
-                reward = 0.0
+                reward = -0.5
         else:
             info = {'current_agent_int': self.current_agent_int}
             reward = 0.0
@@ -141,33 +141,36 @@ class State:
 
         self.data = np.zeros(shape=[board_rows, board_cols])
         self.winner = None
-        self.hash_val = None  # 게임의 각 상태들을 구분짓기 위한 해시값
+        self.id = None  # 게임의 각 상태들을 구분짓기 위한 해시값
         self.end = None
 
     # 특정 상태에서의 유일한 해시 ID값 계산
     # def identifier(self):
-    #     if self.hash_val is None:
-    #         self.hash_val = 0
+    #     if self.id is None:
+    #         self.id = 0
     #         for i in range(self.board_rows):
     #             for j in range(self.board_cols):
-    #                 self.hash_val = self.hash_val * 3 + self.data[i, j] + 1
+    #                 self.id = self.id * 3 + self.data[i, j] + 1
     #
-    #     return self.hash_val
+    #     return self.id
 
     def identifier(self):
-        if self.hash_val is None:
-            self.hash_val = 0
+        if self.id is None:
+            identifier = 0
             k = 0
             for i in range(self.board_rows):
                 for j in range(self.board_cols):
-                    # v = self.data[i, j] if self.data[i, j] != -1.0 else 2
-                    self.hash_val += self.data[i, j] * 3 ** k
+                    identifier += self.data[i, j] * 3 ** k
                     k += 1
+            self.id = identifier
+        return self.id
 
-        return self.hash_val
-
-    def __hash__(self):
-        return self.identifier()
+    # 현 상태에서 유효한 행동들에 대한 리스트 반환
+    def get_available_positions(self):
+        if self.is_end_state():
+            return []
+        else:
+            return [(i, j) for i in range(BOARD_ROWS) for j in range(BOARD_COLS) if self.data[i, j] == 0]
 
     # 플레이어가 종료 상태에 있는지 판단.
     # 플레이어가 게임을 이기거나, 지거나, 비겼다면 True 반환, 그 외는 False 반환
@@ -216,12 +219,6 @@ class State:
         # 게임이 아직 종료되지 않음
         self.end = False
         return self.end
-
-    def get_available_positions(self):
-        if self.is_end_state():
-            return []
-        else:
-            return [(i, j) for i in range(BOARD_ROWS) for j in range(BOARD_COLS) if self.data[i, j] == 0]
 
     # 게임판 상태 출력
     def print_state(self):
