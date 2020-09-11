@@ -40,6 +40,8 @@ class TicTacToe:
         self.generate_all_states(state=self.INITIAL_STATE, player_int=PLAYER_1_INT)
         print("####### Tic-Tac-Toe Env Initialized with {0} States #######".format(len(self.ALL_STATES)))
 
+        #print(self.INITIAL_STATE.id)
+
     def reset(self):
         self.current_agent_int = PLAYER_1_INT
         self.current_state = self.INITIAL_STATE
@@ -144,13 +146,14 @@ class State:
         self.id = None  # 게임의 각 상태들을 구분짓기 위한 해시값
         self.end = None
 
-    # 특정 상태에서의 유일한 해시 ID값 계산
+    #특정 상태에서의 유일한 해시 ID값 계산
     # def identifier(self):
     #     if self.id is None:
-    #         self.id = 0
+    #         identifier = 0
     #         for i in range(self.board_rows):
     #             for j in range(self.board_cols):
-    #                 self.id = self.id * 3 + self.data[i, j] + 1
+    #                 identifier = identifier * 3 + self.data[i, j] + 1
+    #         self.id = identifier
     #
     #     return self.id
 

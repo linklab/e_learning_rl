@@ -15,7 +15,7 @@ LAST_SCHEDULED_EPISODES = 200
 # 최대 반복 에피소드(게임) 횟수
 MAX_EPISODES = 5000
 
-STEP_VERBOSE = True
+STEP_VERBOSE = False
 BOARD_RENDER = False
 
 linestyles = ['-', '--', ':']
