@@ -109,8 +109,6 @@ class Q_Learning_Agent:
 
         self.q_table[state.identifier()][action] += ALPHA * (target_value - self.q_table[state.identifier()][action])
         self.update_epsilon_greedy_policy(state.identifier(), epsilon=epsilon)
-        if state.identifier() == 0.0:
-            print(self.q_table[state.identifier()])
 
     def get_action(self, current_state):
         actions, prob = self.policy[current_state.identifier()]

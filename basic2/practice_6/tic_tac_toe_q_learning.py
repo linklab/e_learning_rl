@@ -144,10 +144,16 @@ def q_learning_for_agent_1_vs_dummy():
                     if state_1 is not None:
                         batch_list_1.append([state_1, action_1, next_state_1, reward_1, done_1])
 
-            if current_agent == agent_1 and len(batch_list_1) >= 3:
+            if current_agent == agent_1 and len(batch_list_1) >= 1:
                 for _ in range(3):
                     transition = random.choice(batch_list_1)
                     state_, action_, next_state_, reward_, done_ = transition
+
+                    print(state_, agent_1.q_table[state_.identifier()], next_state_)
+
+                    # if state_1.identifier() == 0.0:
+                    #     print("!!!", agent_1.q_table[state_1.identifier()])
+
                     current_agent.q_learning(state_, action_, next_state_, reward_, done_, epsilon)
 
             state = next_state

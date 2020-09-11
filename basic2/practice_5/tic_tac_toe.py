@@ -10,20 +10,29 @@ PLAYER_2_INT = -1
 BOARD_ROWS = 3
 BOARD_COLS = 3
 
-
-def map_position_to_idx(row_idx, col_idx):
+############################################
+##  (0,0) -> 7, (0,1) -> 8, (0,2) -> 9    ##
+##  (1,0) -> 4, (1,1) -> 5, (1,2) -> 6    ##
+##  (2,0) -> 1, (2,1) -> 2, (2,2) -> 3    ##
+############################################
+def position_to_action_idx(row_idx, col_idx):
     for i in range(BOARD_ROWS):
         for j in range(BOARD_COLS):
             if row_idx == i and col_idx == j:
                 return (2 - i) * 3 + j + 1
 
-def map_idx_to_position(idx):
+############################################
+##  7 -> (0,0), 8 -> (0,1), 9 -> (0,2)    ##
+##  4 -> (1,0), 5 -> (1,1), 6 -> (1,2)    ##
+##  1 -> (2,0), 2 -> (2,1), 3 -> (2,2)    ##
+############################################
+def action_idx_to_position(idx):
     i, j = divmod(idx, 3)
     i = 2 - i if j != 0 else 3 - i
     j = j - 1 if j != 0 else 2
     return (i, j)
 
-8
+
 ################################################################
 # 플레이어 1,2 간의 게임 진행을 담당하는 Env 클래스
 class TicTacToe:
@@ -55,7 +64,7 @@ class TicTacToe:
         )
 
         next_state_hash = next_state.identifier()
-        assert next_state_hash in self.ALL_STATES, next_state.print_state()
+        assert next_state_hash in self.ALL_STATES, print(next_state.get_state_as_board())
 
         next_state = self.ALL_STATES[next_state_hash]
 
@@ -68,7 +77,7 @@ class TicTacToe:
             elif next_state.winner == PLAYER_2_INT:
                 reward = -1.0
             else:
-                reward = -0.5
+                reward = 0.0
         else:
             info = {'current_agent_int': self.current_agent_int}
             reward = 0.0
@@ -83,7 +92,7 @@ class TicTacToe:
         return next_state, reward, done, info
 
     def render(self, mode='human'):
-        self.current_state.print_state()
+        print(self.current_state.get_state_as_board())
         print()
 
     # 주어진 상태 및 현재 플레이어 심볼에 대하여 발생 가능한 모든 게임 상태 집합 생성
@@ -123,7 +132,7 @@ class TicTacToe:
             print('-------------')
             out = '| '
             for j in range(BOARD_COLS):
-                out += str(map_position_to_idx(i, j)) + ' | '
+                out += str(position_to_action_idx(i, j)) + ' | '
             print(out)
         print('-------------')
 
@@ -170,10 +179,13 @@ class State:
 
     # 현 상태에서 유효한 행동들에 대한 리스트 반환
     def get_available_positions(self):
+        available_positions = None
         if self.is_end_state():
-            return []
+            available_positions = []
         else:
-            return [(i, j) for i in range(BOARD_ROWS) for j in range(BOARD_COLS) if self.data[i, j] == 0]
+            available_positions = [(i, j) for i in range(BOARD_ROWS) for j in range(BOARD_COLS) if self.data[i, j] == 0]
+
+        return available_positions
 
     # 플레이어가 종료 상태에 있는지 판단.
     # 플레이어가 게임을 이기거나, 지거나, 비겼다면 True 반환, 그 외는 False 반환
@@ -191,7 +203,7 @@ class State:
         for i in range(self.board_cols):
             results.append(np.sum(self.data[:, i]))
 
-        # 게임판의 두 개 대각선마다의 대각선 3칸 승리조건 확인
+        # 게임판의 두 개 대각선에 대 대각선 3칸 승리조건 확인
         trace = 0
         reverse_trace = 0
         for i in range(self.board_rows):
@@ -224,15 +236,18 @@ class State:
         return self.end
 
     # 게임판 상태 출력
-    def print_state(self):
+    def get_state_as_board(self):
+        board_str = ""
         for i in range(self.board_rows):
-            print('-------------')
+            board_str += '-------------\n'
             out = '| '
             for j in range(self.board_cols):
                 out += PLAYER_TO_SYMBOL[int(self.data[i, j])] + ' | '
-            print(out)
-        print('-------------')
+            board_str += out + "\n"
+        board_str += '-------------\n'
 
+    def __str__(self):
+        return str([''.join(['O' if x == 1 else 'X' if x == -1 else '*' for x in y]) for y in self.data])
 
 
 def main():
