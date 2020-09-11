@@ -149,7 +149,7 @@ def q_learning_for_agent_1_vs_dummy():
                     transition = random.choice(batch_list_1)
                     state_, action_, next_state_, reward_, done_ = transition
 
-                    print(state_, agent_1.q_table[state_.identifier()], next_state_)
+                    print(state_, agent_1.q_table[state_.identifier()], action_, next_state_, reward_, done_)
 
                     # if state_1.identifier() == 0.0:
                     #     print("!!!", agent_1.q_table[state_1.identifier()])

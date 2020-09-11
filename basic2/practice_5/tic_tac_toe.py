@@ -59,8 +59,10 @@ class TicTacToe:
     # 게임 진행을 위해 턴마다 호출
     def step(self, action=None):
         # 플레이어의 행동에 의한 다음 상태 갱신
+        position = action_idx_to_position(action)
         next_state = self.get_new_state(
-            i=action[0], j=action[1], state_data=self.current_state.data, player_int=self.current_agent_int
+            i=position[0], j=position[1],
+            state_data=self.current_state.data, player_int=self.current_agent_int
         )
 
         next_state_hash = next_state.identifier()
@@ -177,15 +179,18 @@ class State:
             self.id = identifier
         return self.id
 
-    # 현 상태에서 유효한 행동들에 대한 리스트 반환
-    def get_available_positions(self):
-        available_positions = None
+    # 현 상태에서 유효한 행동 ID 리스트 반환
+    def get_available_actions(self):
         if self.is_end_state():
             available_positions = []
         else:
             available_positions = [(i, j) for i in range(BOARD_ROWS) for j in range(BOARD_COLS) if self.data[i, j] == 0]
 
-        return available_positions
+        available_action_ids = []
+        for available_position in available_positions:
+            available_action_ids.append(position_to_action_idx(available_position[0], available_position[1]))
+
+        return available_action_ids
 
     # 플레이어가 종료 상태에 있는지 판단.
     # 플레이어가 게임을 이기거나, 지거나, 비겼다면 True 반환, 그 외는 False 반환
