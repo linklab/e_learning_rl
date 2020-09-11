@@ -47,7 +47,7 @@ def epsilon_scheduled(current_episode, last_scheduled_episodes, initial_epsilon,
     return epsilon
 
 
-def print_game_status(info, episode, epsilon, total_steps, game_status):
+def print_game_statistics(info, episode, epsilon, total_steps, game_status):
     if info['winner'] == 1:
         game_status.num_player_1_win += 1
     elif info['winner'] == -1:

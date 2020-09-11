@@ -4,7 +4,7 @@ from basic2.practice_5.tic_tac_toe import TicTacToe
 
 # 탐색 확률
 from basic2.practice_6.tic_tac_toe_agents import Q_Learning_Agent
-from basic2.practice_6.tic_tac_toe_q_learning import GameStatus, print_game_status
+from basic2.practice_6.tic_tac_toe_q_learning import GameStatus, print_game_statistics
 
 # 최대 반복 에피소드(게임) 횟수
 MAX_EPISODES = 100000
@@ -58,7 +58,7 @@ def self_play():
                         print("비겼습니다!")
 
                 episode_done = done
-                print_game_status(info, episode, 0.0, total_steps, game_status)
+                print_game_statistics(info, episode, 0.0, total_steps, game_status)
             else:
                 state = next_state
 

@@ -3,10 +3,8 @@ import pickle
 from basic2.practice_5.tic_tac_toe import TicTacToe
 from basic2.practice_5.tic_tac_toe_dummy_agents import Dummy_Agent
 from basic2.practice_6.tic_tac_toe_agents import Q_Learning_Agent
-import copy
-
-from basic2.practice_6.tic_tac_toe_utils import GameStatus, epsilon_scheduled, print_step_status, print_game_status, \
-    draw_performance
+from basic2.practice_6.tic_tac_toe_utils import GameStatus, epsilon_scheduled
+from basic2.practice_6.tic_tac_toe_utils import print_step_status, print_game_statistics, draw_performance
 
 INITIAL_EPSILON = 1.0
 FINAL_EPSILON = 0.01
@@ -19,6 +17,7 @@ STEP_VERBOSE = False
 BOARD_RENDER = False
 
 
+# 선수 에이전트: Q-Learning 에이전트, 후수 에이전트: Dummy 에이전트
 def q_learning_for_agent_1_vs_dummy():
     game_status = GameStatus()
     env = TicTacToe()
@@ -49,7 +48,7 @@ def q_learning_for_agent_1_vs_dummy():
             )
 
             if done:
-                print_game_status(info, episode, epsilon, total_steps, game_status)
+                print_game_statistics(info, episode, epsilon, total_steps, game_status)
 
                 # reward: agent_1이 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
                 agent_1.q_learning(state, action, None, reward, done, epsilon)
@@ -62,7 +61,7 @@ def q_learning_for_agent_1_vs_dummy():
                 )
 
                 if done:
-                    print_game_status(info, episode, epsilon, total_steps, game_status)
+                    print_game_statistics(info, episode, epsilon, total_steps, game_status)
 
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
                     agent_1.q_learning(state, action, None, reward, done, epsilon)
@@ -81,6 +80,7 @@ def q_learning_for_agent_1_vs_dummy():
         pickle.dump(q_table_and_policy, f)
 
 
+# 선수 에이전트: Dummy 에이전트, 후수 에이전트: Q-Learning 에이전트
 def q_learning_for_dummy_vs_agent_2():
     game_status = GameStatus()
 
@@ -115,7 +115,7 @@ def q_learning_for_dummy_vs_agent_2():
             )
 
             if done:
-                print_game_status(info, episode, epsilon, total_steps, game_status)
+                print_game_statistics(info, episode, epsilon, total_steps, game_status)
 
                 # 미루워 두었던 agent_2의 배치에 transition 정보 추가
                 if STATE_2 is not None and ACTION_2 is not None:
@@ -134,7 +134,7 @@ def q_learning_for_dummy_vs_agent_2():
                 )
 
                 if done:
-                    print_game_status(info, episode, epsilon, total_steps, game_status)
+                    print_game_statistics(info, episode, epsilon, total_steps, game_status)
 
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
                     agent_2.q_learning(state, action, None, -1.0 * reward, done, epsilon)
@@ -156,6 +156,7 @@ def q_learning_for_dummy_vs_agent_2():
         pickle.dump(q_table_and_policy, f)
 
 
+# 선수 에이전트: Q-Learning 에이전트, 후수 에이전트: Q-Learning 에이전트
 def q_learning_for_self_play():
     game_status = GameStatus()
 
@@ -191,7 +192,7 @@ def q_learning_for_self_play():
             )
 
             if done:
-                print_game_status(info, episode, epsilon, total_steps, game_status)
+                print_game_statistics(info, episode, epsilon, total_steps, game_status)
 
                 # reward: agent_1가 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
                 agent_1.q_learning(state, action, None, reward, done, epsilon)
@@ -217,7 +218,8 @@ def q_learning_for_self_play():
                 )
 
                 if done:
-                    print_game_status(info, episode, epsilon, total_steps, game_status)
+                    # 게임 완료 및 게임 승패 관련 통계 정보 력
+                    print_game_statistics(info, episode, epsilon, total_steps, game_status)
 
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
                     agent_2.q_learning(state, action, None, -1.0 * reward, done, epsilon)
@@ -253,6 +255,6 @@ if __name__ == '__main__':
     if not os.path.exists('models/'):
         os.makedirs('models/')
 
-    #q_learning_for_agent_1_vs_dummy()
-    #q_learning_for_dummy_vs_agent_2()
+    q_learning_for_agent_1_vs_dummy()
+    q_learning_for_dummy_vs_agent_2()
     q_learning_for_self_play()
