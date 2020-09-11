@@ -31,7 +31,7 @@ def self_play():
 
     for episode in range(MAX_EPISODES):
         state = env.reset()
-        current_player = agent_1
+        current_agent = agent_1
 
         if VERBOSE:
             print("[시작 상태]")
@@ -40,12 +40,12 @@ def self_play():
         episode_done = False
         while not episode_done:
             total_steps += 1
-            action = current_player.get_action(state)
+            action = current_agent.get_action(state)
 
             next_state, _, done, info = env.step(action)
 
             if VERBOSE:
-                print("[{0}]".format("Q-Learning 에이전트 1" if current_player == agent_1 else "Q-Learning 에이전트 2"))
+                print("[{0}]".format("Q-Learning 에이전트 1" if current_agent == agent_1 else "Q-Learning 에이전트 2"))
                 env.render()
 
             if done:
@@ -62,10 +62,10 @@ def self_play():
             else:
                 state = next_state
 
-            if current_player == agent_1:
-                current_player = agent_2
+            if current_agent == agent_1:
+                current_agent = agent_2
             else:
-                current_player = agent_1
+                current_agent = agent_1
 
 
 if __name__ == '__main__':

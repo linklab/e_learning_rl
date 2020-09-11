@@ -1,9 +1,5 @@
-import random
-
 # 스텝 사이즈
 import numpy as np
-
-from basic2.practice_5.tic_tac_toe import action_idx_to_position
 
 ALPHA = 0.1
 
@@ -12,7 +8,7 @@ GAMMA = 0.99
 
 
 class Human_Agent:
-    def __init__(self, name: object, env: object) -> object:
+    def __init__(self, name, env):
         self.name = name
         self.env = env
 
@@ -22,7 +18,7 @@ class Human_Agent:
         action_id = None
 
         while not valid_action_id:
-            action_id = int(input("9개 셀 중 하나를 선택하세요 (1부터 9까지의 각 셀에 매칭되는 숫자 키패드를 선택하고 엔터를 누르세요)"))
+            action_id = int(input("9개 셀 중 하나를 선택하세요 (보드 상단부터 숫자 키패드와 매칭하여 [7,8,9, 4,5,6, 1,2,3] 숫자 중 하나를 선택하고 엔터를 누르세요)"))
             if action_id > 9 or action_id < 0:
                 print("[입력 오류: {0}] 1부터 9사이의 숫자 값을 입력하세요.".format(action_id))
                 continue
@@ -124,15 +120,18 @@ class Q_Learning_Agent:
                 idx, state_id, self.q_table[state_id]
             ))
 
-    def print_q_table_one(self, state):
-        print(state.identifier(), list(self.q_table[state.identifier()].values()))
+    def get_q_values_for_one_state(self, state):
+        state_q_values = self.q_table[state.identifier()]
+        state_q_value_list = []
+        for action_id, q_value in state_q_values.items():
+            state_q_value_list.append("{0}:{1:.3f}".format(action_id, q_value))
 
-    def print_policy_one(self, state):
-        print(state.identifier(), list(self.policy[state.identifier()]))
+        return ", ".join(state_q_value_list)
 
-    def num_valid_state(self):
-        num_valid_state = 0
-        for state_id in self.env.ALL_STATES:
-            if len(self.q_table[state_id].values()) != 0:
-                num_valid_state += 1
-        return num_valid_state
+    def get_policy_for_one_state(self, state):
+        action_ids, action_probs = self.policy[state.identifier()]
+        state_policy_list = []
+        for idx, action_id in enumerate(action_ids):
+            state_policy_list.append("{0}:{1:.3f}".format(action_id, action_probs[idx]))
+
+        return ", ".join(state_policy_list)

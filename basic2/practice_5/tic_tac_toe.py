@@ -4,7 +4,7 @@ import numpy as np
 
 from basic2.practice_5.tic_tac_toe_dummy_agents import Dummy_Agent
 
-PLAYER_TO_SYMBOL = ['*', 'O', 'X']
+PLAYER_TO_SYMBOL = ['-', 'O', 'X']
 PLAYER_1_INT = 1
 PLAYER_2_INT = -1
 BOARD_ROWS = 3
@@ -95,7 +95,6 @@ class TicTacToe:
 
     def render(self, mode='human'):
         print(self.current_state.get_state_as_board())
-        print()
 
     # 주어진 상태 및 현재 플레이어 심볼에 대하여 발생 가능한 모든 게임 상태 집합 생성
     def generate_all_states(self, state, player_int):
@@ -250,9 +249,10 @@ class State:
                 out += PLAYER_TO_SYMBOL[int(self.data[i, j])] + ' | '
             board_str += out + "\n"
         board_str += '-------------\n'
+        return board_str
 
     def __str__(self):
-        return str([''.join(['O' if x == 1 else 'X' if x == -1 else '*' for x in y]) for y in self.data])
+        return str([''.join(['O' if x == 1 else 'X' if x == -1 else '-' for x in y]) for y in self.data])
 
 
 def main():

@@ -18,21 +18,25 @@ def play_with_agent_2():
         agent_2.make_greedy_policy()
 
     state = env.reset()
-    current_player = agent_1
+    current_agent = agent_1
 
-    print("[시작 상태]")
+    print()
+
+    print("[당신(사람) 차례]")
     env.render()
 
     done = False
     while not done:
-        if current_player == agent_2:
-            agent_2.print_policy_one(state)
-
-        action = current_player.get_action(state)
-
+        action = current_agent.get_action(state)
         next_state, _, done, info = env.step(action)
+        if current_agent == agent_2:
+            print("     State:", state)
+            print("   Q-value:", current_agent.get_q_values_for_one_state(state))
+            print("    Policy:", current_agent.get_policy_for_one_state(state))
+            print("    Action:", action)
+            print("Next State:", next_state, end="\n\n")
 
-        print("[{0}]".format("당신[사람]" if current_player == agent_1 else "Q-Learning 에이전트"))
+        print("[{0}]".format("Q-Learning 에이전트 차례" if current_agent == agent_1 else "당신(사람) 차례"))
         env.render()
 
         if done:
@@ -45,10 +49,10 @@ def play_with_agent_2():
         else:
             state = next_state
 
-        if current_player == agent_1:
-            current_player = agent_2
+        if current_agent == agent_1:
+            current_agent = agent_2
         else:
-            current_player = agent_1
+            current_agent = agent_1
 
 
 if __name__ == '__main__':
