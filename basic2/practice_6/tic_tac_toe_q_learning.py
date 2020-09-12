@@ -8,10 +8,10 @@ from basic2.practice_6.tic_tac_toe_utils import print_step_status, print_game_st
 
 INITIAL_EPSILON = 1.0
 FINAL_EPSILON = 0.01
-LAST_SCHEDULED_EPISODES = 40000
+LAST_SCHEDULED_EPISODES = 100000
 
 # 최대 반복 에피소드(게임) 횟수
-MAX_EPISODES = 200000
+MAX_EPISODES = 1000000
 
 STEP_VERBOSE = False
 BOARD_RENDER = False
@@ -48,7 +48,9 @@ def q_learning_for_agent_1_vs_dummy():
             )
 
             if done:
-                print_game_statistics(info, episode, epsilon, total_steps, game_status)
+                print_game_statistics(
+                    info, episode, epsilon, total_steps, game_status, agent_1, agent_2
+                )
 
                 # reward: agent_1이 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
                 agent_1.q_learning(state, action, None, reward, done, epsilon)
@@ -61,7 +63,9 @@ def q_learning_for_agent_1_vs_dummy():
                 )
 
                 if done:
-                    print_game_statistics(info, episode, epsilon, total_steps, game_status)
+                    print_game_statistics(
+                        info, episode, epsilon, total_steps, game_status, agent_1, agent_2
+                    )
 
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
                     agent_1.q_learning(state, action, None, reward, done, epsilon)
@@ -115,7 +119,9 @@ def q_learning_for_dummy_vs_agent_2():
             )
 
             if done:
-                print_game_statistics(info, episode, epsilon, total_steps, game_status)
+                print_game_statistics(
+                    info, episode, epsilon, total_steps, game_status, agent_1, agent_2
+                )
 
                 # 미루워 두었던 agent_2의 배치에 transition 정보 추가
                 if STATE_2 is not None and ACTION_2 is not None:
@@ -134,7 +140,9 @@ def q_learning_for_dummy_vs_agent_2():
                 )
 
                 if done:
-                    print_game_statistics(info, episode, epsilon, total_steps, game_status)
+                    print_game_statistics(
+                        info, episode, epsilon, total_steps, game_status, agent_1, agent_2
+                    )
 
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
                     agent_2.q_learning(state, action, None, -1.0 * reward, done, epsilon)
@@ -192,7 +200,9 @@ def q_learning_for_self_play():
             )
 
             if done:
-                print_game_statistics(info, episode, epsilon, total_steps, game_status)
+                print_game_statistics(
+                    info, episode, epsilon, total_steps, game_status, agent_1, agent_2
+                )
 
                 # reward: agent_1가 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
                 agent_1.q_learning(state, action, None, reward, done, epsilon)
@@ -219,7 +229,9 @@ def q_learning_for_self_play():
 
                 if done:
                     # 게임 완료 및 게임 승패 관련 통계 정보 력
-                    print_game_statistics(info, episode, epsilon, total_steps, game_status)
+                    print_game_statistics(
+                        info, episode, epsilon, total_steps, game_status, agent_1, agent_2
+                    )
 
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
                     agent_2.q_learning(state, action, None, -1.0 * reward, done, epsilon)

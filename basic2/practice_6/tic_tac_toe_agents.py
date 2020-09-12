@@ -50,6 +50,16 @@ class Q_Learning_Agent:
 
         return q_table
 
+    def avg_q_value(self):
+        q_value_list = []
+
+        for state_id in self.env.ALL_STATES:
+            available_action_ids = self.env.ALL_STATES[state_id].get_available_actions()
+            for available_action_id in available_action_ids:
+                q_value_list.append(self.q_table[state_id][available_action_id])
+
+        return np.average(q_value_list)
+
     # 모든 상태에서 수행 가능한 행동에 맞춰 임의의 정책을 생성함
     # 초기에 각 행동의 선택 확률은 모두 같음
     def generate_initial_random_policy(self):
