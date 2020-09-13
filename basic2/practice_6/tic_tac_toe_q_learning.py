@@ -8,10 +8,10 @@ from basic2.practice_6.tic_tac_toe_utils import print_step_status, print_game_st
 
 INITIAL_EPSILON = 1.0
 FINAL_EPSILON = 0.01
-LAST_SCHEDULED_EPISODES = 100000
+LAST_SCHEDULED_EPISODES = 200000
 
 # 최대 반복 에피소드(게임) 횟수
-MAX_EPISODES = 1000000
+MAX_EPISODES = 2000000
 
 STEP_VERBOSE = False
 BOARD_RENDER = False
@@ -48,12 +48,12 @@ def q_learning_for_agent_1_vs_dummy():
             )
 
             if done:
+                # reward: agent_1이 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
+                agent_1.q_learning(state, action, None, reward, done, epsilon)
+
                 print_game_statistics(
                     info, episode, epsilon, total_steps, game_status, agent_1, agent_2
                 )
-
-                # reward: agent_1이 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
-                agent_1.q_learning(state, action, None, reward, done, epsilon)
             else:
                 # agent_2 스텝 수행
                 action_2 = agent_2.get_action(next_state)
@@ -63,12 +63,12 @@ def q_learning_for_agent_1_vs_dummy():
                 )
 
                 if done:
+                    # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
+                    agent_1.q_learning(state, action, None, reward, done, epsilon)
+
                     print_game_statistics(
                         info, episode, epsilon, total_steps, game_status, agent_1, agent_2
                     )
-
-                    # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
-                    agent_1.q_learning(state, action, None, reward, done, epsilon)
                 else:
                     agent_1.q_learning(state, action, next_state, reward, done, epsilon)
 

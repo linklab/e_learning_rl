@@ -37,6 +37,7 @@ class Q_Learning_Agent:
         self.env = env
         self.q_table = self.generate_initial_q_value()
         self.policy = self.generate_initial_random_policy()
+        self.q_learning_loss = None
 
     # 비어있는 행동 가치 테이블을 0~1 사이의 임의의 값으로 초기화하며 생성함
     # q_value 테이블의 상태: state_id, q_value 테이블의 행동: 해당 상태에서의 available_action_id
@@ -111,7 +112,8 @@ class Q_Learning_Agent:
         else:
             target_value = reward + GAMMA * max(self.q_table[next_state.identifier()].values())
 
-        self.q_table[state.identifier()][action_id] += ALPHA * (target_value - self.q_table[state.identifier()][action_id])
+        self.q_learning_loss = target_value - self.q_table[state.identifier()][action_id]
+        self.q_table[state.identifier()][action_id] += ALPHA * self.q_learning_loss
         self.update_epsilon_greedy_policy(state.identifier(), epsilon=epsilon)
 
     def get_action(self, current_state):

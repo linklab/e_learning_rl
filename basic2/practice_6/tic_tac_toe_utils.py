@@ -19,6 +19,8 @@ class GameStatus:
         self.draw_info_list = []
         self.agent_1_avg_q_list = []
         self.agent_2_avg_q_list = []
+        self.agent_1_q_learning_loss = []
+        self.agent_2_q_learning_loss = []
 
         self.player_1_win_rate_over_100_games = []
         self.player_2_win_rate_over_100_games = []
@@ -30,7 +32,7 @@ def draw_performance(game_status, file_name, max_episodes):
 
     figure, _ = plt.subplots(nrows=2, ncols=1)
 
-    plt.subplot(211)
+    plt.subplot(311)
     for i in range(3):
         if i == 0:
             values = game_status.player_1_win_rate_over_100_games[::100]
@@ -44,7 +46,7 @@ def draw_performance(game_status, file_name, max_episodes):
     plt.ylabel('Winning Rate')
     plt.legend()
 
-    plt.subplot(212)
+    plt.subplot(312)
     if game_status.agent_1_avg_q_list:
         plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_1_avg_q_list, label="Agent 1")
     if game_status.agent_2_avg_q_list:
@@ -52,6 +54,16 @@ def draw_performance(game_status, file_name, max_episodes):
 
     plt.xlabel('Episode')
     plt.ylabel('Average Q Values')
+    plt.legend()
+
+    plt.subplot(313)
+    if game_status.agent_1_q_learning_loss:
+        plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_1_q_learning_loss, label="Agent 1")
+    if game_status.agent_2_avg_q_list:
+        plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_2_q_learning_loss, label="Agent 2")
+
+    plt.xlabel('Episode')
+    plt.ylabel('Q Learning Loss')
     plt.legend()
 
     plt.tight_layout()
@@ -85,9 +97,11 @@ def print_game_statistics(info, episode, epsilon, total_steps, game_status, agen
     if episode % 10000 == 0:
         if isinstance(agent_1, Q_Learning_Agent):
             game_status.agent_1_avg_q_list.append(agent_1.avg_q_value())
+            game_status.agent_1_q_learning_loss.append(agent_1.q_learning_loss)
 
         if isinstance(agent_2, Q_Learning_Agent):
             game_status.agent_2_avg_q_list.append(agent_2.avg_q_value())
+            game_status.agent_2_q_learning_loss.append(agent_2.q_learning_loss)
 
     print("### GAMES DONE: {0} | episolon: {1:.2f} | total_steps: {2} | "
           "agent_1_win : agent_2_win : draw = {3} : {4} : {5} | "
