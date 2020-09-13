@@ -15,7 +15,6 @@ def play_with_agent_1():
         q_table_and_policy = pickle.load(f)
         agent_1.q_table = q_table_and_policy['q_table']
         agent_1.policy = q_table_and_policy['policy']
-        agent_1.make_greedy_policy()
 
     state = env.reset()
     current_agent = agent_1

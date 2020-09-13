@@ -38,31 +38,32 @@ def action_idx_to_position(idx):
 class TicTacToe:
     def __init__(self):
         self.BOARD_SIZE = BOARD_ROWS * BOARD_COLS
-        self.current_state = None
-        self.current_agent_int = None
+        self.current_state = None       # 현재 상태 관리
+        self.current_agent_int = None   # 현재 에이전트(플레이어) 관리
 
-        self.INITIAL_STATE = State()
+        self.INITIAL_STATE = State()    # 초기 상태 설정
 
+        # 모든 상태가 ‘상태 식별자: 상태’로 관리되는 사전 생성
         self.ALL_STATES = {}
         self.ALL_STATES[self.INITIAL_STATE.identifier()] = self.INITIAL_STATE
 
         self.generate_all_states(state=self.INITIAL_STATE, player_int=PLAYER_1_INT)
         print("####### Tic-Tac-Toe Env Initialized with {0} States #######".format(len(self.ALL_STATES)))
 
-        #print(self.INITIAL_STATE.id)
+        # for id, state in self.ALL_STATES.items():
+        #     print(id, state)
 
     def reset(self):
         self.current_agent_int = PLAYER_1_INT
         self.current_state = self.INITIAL_STATE
         return self.current_state
 
-    # 게임 진행을 위해 턴마다 호출
+    # 게임 진행을 위해 각 플레이어의 착수 때 마다 호출
     def step(self, action=None):
         # 플레이어의 행동에 의한 다음 상태 갱신
         position = action_idx_to_position(action)
         next_state = self.get_new_state(
-            i=position[0], j=position[1],
-            state_data=self.current_state.data, player_int=self.current_agent_int
+            i=position[0], j=position[1], state_data=self.current_state.data, player_int=self.current_agent_int
         )
 
         next_state_hash = next_state.identifier()
@@ -151,7 +152,7 @@ class State:
         self.board_cols = board_cols
         self.board_size = board_rows * board_cols
 
-        self.data = np.zeros(shape=[board_rows, board_cols])
+        self.data = np.zeros(shape=[board_rows, board_cols], dtype=np.int)
         self.winner = None
         self.id = None  # 게임의 각 상태들을 구분짓기 위한 해시값
         self.end = None

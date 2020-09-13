@@ -76,6 +76,7 @@ def q_learning_for_agent_1_vs_dummy():
 
     draw_performance(game_status, 'q_learning_for_agent_1_vs_dummy.png', MAX_EPISODES)
 
+    agent_1.make_greedy_policy()
     with open(os.path.join('models', 'agent_1.bin'), 'wb') as f:
         q_table_and_policy = {
             'q_table': agent_1.q_table,
@@ -156,6 +157,7 @@ def q_learning_for_dummy_vs_agent_2():
 
     draw_performance(game_status, 'q_learning_for_dummy_vs_agent_2.png', MAX_EPISODES)
 
+    agent_2.make_greedy_policy()
     with open(os.path.join('models', 'agent_2.bin'), 'wb') as f:
         q_table_and_policy = {
             'q_table': agent_2.q_table,
@@ -250,6 +252,7 @@ def q_learning_for_self_play():
 
     draw_performance(game_status, "q_learning_for_self_play.png", MAX_EPISODES)
 
+    agent_1.make_greedy_policy()
     with open(os.path.join('models', 'self_agent.bin'), 'wb') as f:
         q_table_and_policy = {
             'q_table': agent_1.q_table,
