@@ -30,6 +30,7 @@ class GameStatus:
 
 def draw_performance(game_status, file_name, max_episodes):
     plt.clf()
+    plt.rcParams["figure.figsize"] = (10, 12)
 
     figure, _ = plt.subplots(nrows=4, ncols=1)
 
