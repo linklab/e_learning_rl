@@ -50,6 +50,9 @@ class TicTacToe:
         self.generate_all_states(state=self.INITIAL_STATE, player_int=PLAYER_1_INT)
         print("####### Tic-Tac-Toe Env Initialized with {0} States #######".format(len(self.ALL_STATES)))
 
+        # for id, state in self.ALL_STATES.items():
+        #     print(id, state)
+
     def reset(self):
         self.current_agent_int = PLAYER_1_INT
         self.current_state = self.INITIAL_STATE
@@ -149,7 +152,7 @@ class State:
         self.board_cols = board_cols
         self.board_size = board_rows * board_cols
 
-        self.data = np.zeros(shape=[board_rows, board_cols])
+        self.data = np.zeros(shape=[board_rows, board_cols], dtype=np.int)
         self.winner = None
         self.id = None  # 게임의 각 상태들을 구분짓기 위한 해시값
         self.end = None
