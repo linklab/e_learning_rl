@@ -1,6 +1,7 @@
 # 스텝 사이즈
 import numpy as np
 
+# 스텝 사이즈
 ALPHA = 0.1
 
 # 감가율
