@@ -54,6 +54,7 @@ def q_learning_for_agent_1_vs_dummy():
                 # reward: agent_1이 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
                 agent_1_episode_td_error += agent_1.q_learning(state, action, None, reward, done, epsilon)
 
+                # 게임 완료 및 게임 승패 관련 통계 정보 출력
                 print_game_statistics(
                     info, episode, epsilon, total_steps, game_status, agent_1, agent_2
                 )
@@ -69,6 +70,7 @@ def q_learning_for_agent_1_vs_dummy():
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
                     agent_1_episode_td_error += agent_1.q_learning(state, action, None, reward, done, epsilon)
 
+                    # 게임 완료 및 게임 승패 관련 통계 정보 출력
                     print_game_statistics(
                         info, episode, epsilon, total_steps, game_status, agent_1, agent_2
                     )
@@ -128,11 +130,13 @@ def q_learning_for_dummy_vs_agent_2():
             )
 
             if done:
+                # 게임 완료 및 게임 승패 관련 통계 정보 출력
                 print_game_statistics(
                     info, episode, epsilon, total_steps, game_status, agent_1, agent_2
                 )
 
                 # 미루워 두었던 agent_2의 배치에 transition 정보 추가
+                # reward: agent_1이 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
                 if STATE_2 is not None and ACTION_2 is not None:
                     agent_2_episode_td_error += agent_2.q_learning(STATE_2, ACTION_2, None, -1.0 * reward, done, epsilon)
             else:
@@ -149,6 +153,7 @@ def q_learning_for_dummy_vs_agent_2():
                 )
 
                 if done:
+                    # 게임 완료 및 게임 승패 관련 통계 정보 출력
                     print_game_statistics(
                         info, episode, epsilon, total_steps, game_status, agent_1, agent_2
                     )
@@ -156,7 +161,7 @@ def q_learning_for_dummy_vs_agent_2():
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
                     agent_2_episode_td_error += agent_2.q_learning(state, action, None, -1.0 * reward, done, epsilon)
                 else:
-                    # agent_2을 위한 현재 상태 및 행동 정보를 저장해 두었다가 추후 활용
+                    # agent_2에 방문한 현재 상태 및 수행한 행동 정보를 저장해 두었다가 추후 활용
                     STATE_2 = state
                     ACTION_2 = action
 
@@ -215,6 +220,7 @@ def q_learning_for_self_play():
             )
 
             if done:
+                # 게임 완료 및 게임 승패 관련 통계 정보 출력
                 print_game_statistics(
                     info, episode, epsilon, total_steps, game_status, agent_1, agent_2
                 )
@@ -230,7 +236,7 @@ def q_learning_for_self_play():
                 if STATE_2 is not None and ACTION_2 is not None:
                     agent_2_episode_td_error += agent_2.q_learning(STATE_2, ACTION_2, next_state, reward, done, epsilon)
 
-                # agent_1을 위한 현재 상태와 행동 정보를 저장해 두었다가 추후 활용
+                # agent_1이 방문한 현재 상태 및 수행한 행동 정보를 저장해 두었다가 추후 활용
                 STATE_1 = state
                 ACTION_1 = action
 
@@ -243,7 +249,7 @@ def q_learning_for_self_play():
                 )
 
                 if done:
-                    # 게임 완료 및 게임 승패 관련 통계 정보 력
+                    # 게임 완료 및 게임 승패 관련 통계 정보 출력
                     print_game_statistics(
                         info, episode, epsilon, total_steps, game_status, agent_1, agent_2
                     )
@@ -254,7 +260,7 @@ def q_learning_for_self_play():
                     # 미루워 두었던 agent_1의 배치에 transition 정보 추가
                     agent_1_episode_td_error += agent_1.q_learning(STATE_1, ACTION_1, None, reward, done, epsilon)
                 else:
-                    # agent_2을 위한 현재 transition 정보를 저장해 두었다가 추후 활용
+                    # agent_2이 방문한 현재 상태 및 수행한 행동 정보를 저장해 두었다가 추후 활용
                     STATE_2 = state
                     ACTION_2 = action
 
