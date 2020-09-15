@@ -10,11 +10,11 @@ EPSILON = 0.1
 
 # 비어있는 행동 가치 테이블을 0으로 초기화하며 생성함
 def generate_initial_q_value_and_return(env):
-    state_action_values = np.zeros((env.num_internal_states, env.action_space.NUM_ACTIONS))
+    state_action_values = np.zeros((env.num_internal_states, env.NUM_ACTIONS))
     returns = dict()
 
-    for state in env.observation_space.STATES:
-        for action in env.action_space.ACTIONS:
+    for state in env.STATES:
+        for action in env.ACTIONS:
             returns[(state, action)] = list()
 
     return state_action_values, returns
@@ -25,10 +25,10 @@ def generate_initial_q_value_and_return(env):
 def generate_initial_random_policy(env):
     policy = dict()
 
-    for state in env.observation_space.STATES:
+    for state in env.STATES:
         actions = []
         prob = []
-        for action in env.action_space.ACTIONS:
+        for action in env.ACTIONS:
             actions.append(action)
             prob.append(0.5)
         policy[state] = (actions, prob)
@@ -65,7 +65,7 @@ def first_visit_mc_prediction(state_action_values, returns, episode, visited_sta
 
         value_prediction_conditions = [
             (state, action) not in visited_state_actions[:len(visited_state_actions) - idx - 1],
-            state not in env.observation_space.TERMINAL_STATES
+            state not in env.TERMINAL_STATES
         ]
 
         if all(value_prediction_conditions):
@@ -77,32 +77,32 @@ def first_visit_mc_prediction(state_action_values, returns, episode, visited_sta
 def generate_soft_greedy_policy(env, state_action_values, policy):
     new_policy = dict()
 
-    for state in env.observation_space.STATES:
+    for state in env.STATES:
         actions = []
         action_probs = []
-        if state in env.observation_space.TERMINAL_STATES:
-            for action in range(env.action_space.NUM_ACTIONS):
+        if state in env.TERMINAL_STATES:
+            for action in range(env.NUM_ACTIONS):
                 actions.append(action)
                 action_probs.append(0.5)
             new_policy[state] = (actions, action_probs)
         else:
             max_prob_actions = [action_ for action_, value_ in enumerate(state_action_values[state, :]) if
                                 value_ == np.max(state_action_values[state, :])]
-            for action in range(env.action_space.NUM_ACTIONS):
+            for action in range(env.NUM_ACTIONS):
                 actions.append(action)
                 if action in max_prob_actions:
                     action_probs.append(
-                        (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.action_space.NUM_ACTIONS
+                        (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.NUM_ACTIONS
                     )
                 else:
                     action_probs.append(
-                        EPSILON / env.action_space.NUM_ACTIONS
+                        EPSILON / env.NUM_ACTIONS
                     )
 
             new_policy[state] = (actions, action_probs)
 
     error = 0.0
-    for i in env.observation_space.STATES:
+    for i in env.STATES:
         error += np.sum(
             np.absolute(
                 np.array(policy[i][1]) - np.array(new_policy[i][1])

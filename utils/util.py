@@ -54,7 +54,7 @@ def draw_grid_world_state_values_image(state_values, filename, GRID_HEIGHT, GRID
     plt.savefig(filename)
     plt.close()
 
-
+# 학습 이후의 행동가치함수를 표 형태로 그리는 함수
 def draw_grid_world_action_values_image(action_values, filename, GRID_HEIGHT, GRID_WIDTH, NUM_ACTIONS, ACTION_SYMBOLS):
     action_str_values = []
     for i in range(GRID_HEIGHT):
@@ -194,20 +194,20 @@ def draw_random_walk_policy_image(policy, env):
     randomwalk_str += " T1      " + "       ".join(["{0}".format(i) for i in range(env.num_internal_states)]) + "      T2\n"
 
     randomwalk_str += "       "
-    for state in env.observation_space.STATES:
+    for state in env.STATES:
         actions, prob = policy[state]
         randomwalk_str += "{0}:{1:4}  ".format(
-            env.action_space.ACTION_SYMBOLS[env.action_space.ACTION_LEFT],
-            np.round(prob[env.action_space.ACTION_LEFT], decimals=2)
+            env.ACTION_SYMBOLS[env.ACTION_LEFT],
+            np.round(prob[env.ACTION_LEFT], decimals=2)
         )
     randomwalk_str += "\n"
 
     randomwalk_str += "       "
-    for state in env.observation_space.STATES:
+    for state in env.STATES:
         actions, prob = policy[state]
         randomwalk_str += "{0}:{1:4}  ".format(
-            env.action_space.ACTION_SYMBOLS[env.action_space.ACTION_RIGHT],
-            np.round(prob[env.action_space.ACTION_RIGHT], decimals=2)
+            env.ACTION_SYMBOLS[env.ACTION_RIGHT],
+            np.round(prob[env.ACTION_RIGHT], decimals=2)
         )
 
     print(randomwalk_str)

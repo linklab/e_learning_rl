@@ -40,13 +40,13 @@ class PongWrappingEnv:
         if reset:
             observation = self.env.reset()
             for _ in range(count - 1):
-                action_ = self.env.action_space.sample()
+                action_ = self.env.sample()
                 observation, _, _, _ = self.env.step(action=action_)
             observation = self.downsample(observation)
             return observation
         else:
             for _ in range(count - 1):
-                action_ = self.env.action_space.sample()
+                action_ = self.env.sample()
                 self.env.step(action=action_)
             observation, reward, done, info = self.env.step(action=action)
             observation = self.downsample(observation)
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     while not done:
         env.render()
 
-        action = random.randint(0, env.action_space.n - 1)
+        action = random.randint(0, env.n - 1)
         if action == 0:
             action = PONG_UP_ACTION
         elif action == 1:

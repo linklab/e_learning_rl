@@ -33,12 +33,12 @@ TOTAL_RUNS = 25
 
 # 비어있는 행동 가치 테이블을 0~1 사이의 임의의 값으로 초기화하며 생성함
 def generate_initial_q_value(env):
-    q_value = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
+    q_value = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.NUM_ACTIONS))
 
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
             if (i, j) not in TERMINAL_STATES:
-                for action in env.action_space.ACTIONS:
+                for action in env.ACTIONS:
                     q_value[i, j, action] = random.random()
     return q_value
 
@@ -53,7 +53,7 @@ def generate_initial_random_policy(env):
             if (i, j) not in TERMINAL_STATES:
                 actions = []
                 action_probs = []
-                for action in env.action_space.ACTIONS:
+                for action in env.ACTIONS:
                     actions.append(action)
                     action_probs.append(0.25)
 
@@ -69,15 +69,15 @@ def update_epsilon_greedy_policy(env, state, q_value, policy):
 
     actions = []
     action_probs = []
-    for action in env.action_space.ACTIONS:
+    for action in env.ACTIONS:
         actions.append(action)
         if action in max_prob_actions:
             action_probs.append(
-                (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.action_space.NUM_ACTIONS
+                (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.NUM_ACTIONS
             )
         else:
             action_probs.append(
-                EPSILON / env.action_space.NUM_ACTIONS
+                EPSILON / env.NUM_ACTIONS
             )
 
     policy[state] = (actions, action_probs)
@@ -154,7 +154,7 @@ def expected_sarsa(env, q_value, policy, step_size=ALPHA):
         else:
             # 새로운 상태에 대한 기대값 계산
             expected_next_q = 0.0
-            for action_ in env.action_space.ACTIONS:
+            for action_ in env.ACTIONS:
                 action_prob = policy[next_state][1]
                 expected_next_q += action_prob[action_] * q_value[next_state[0], next_state[1], action_]
 
@@ -182,13 +182,13 @@ def print_optimal_policy(env, q_value):
                 continue
 
             best_action = np.argmax(q_value[i, j, :])
-            if best_action == env.action_space.ACTION_UP:
+            if best_action == env.ACTION_UP:
                 optimal_policy[-1].append('U')
-            elif best_action == env.action_space.ACTION_DOWN:
+            elif best_action == env.ACTION_DOWN:
                 optimal_policy[-1].append('D')
-            elif best_action == env.action_space.ACTION_LEFT:
+            elif best_action == env.ACTION_LEFT:
                 optimal_policy[-1].append('L')
-            elif best_action == env.action_space.ACTION_RIGHT:
+            elif best_action == env.ACTION_RIGHT:
                 optimal_policy[-1].append('R')
 
     for row in optimal_policy:

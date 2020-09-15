@@ -19,7 +19,7 @@ B_PRIME_POSITION = (2, 3)   # 상태 B에서 행동시 도착할 위치 좌표
 
 # 그리드 월드에서 최적 행동 가치 산출
 def calculate_grid_world_optimal_action_values(env):
-    action_value_function = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
+    action_value_function = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.NUM_ACTIONS))
 
     # 행동 가치 테이블의 값들이 수렴할 때까지 반복
     while True:
@@ -29,7 +29,7 @@ def calculate_grid_world_optimal_action_values(env):
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
                 # 주어진 상태에서 가능한 모든 행동들의 결과로 다음 상태 및 보상 정보 갱신
-                for action in env.action_space.ACTIONS:
+                for action in env.ACTIONS:
                     (next_i, next_j), reward, prob = env.get_state_action_probability(state=(i, j), action=action)
 
                     # Bellman Optimality Equation, 벨만 최적 방정식 적용
@@ -75,8 +75,8 @@ def main():
         optimal_action_values,
         'images/grid_world_optimal_action_values.png',
         GRID_HEIGHT, GRID_WIDTH,
-        env.action_space.NUM_ACTIONS,
-        env.action_space.ACTION_SYMBOLS
+        env.NUM_ACTIONS,
+        env.ACTION_SYMBOLS
     )
 
     print()
@@ -86,7 +86,7 @@ def main():
         optimal_policy,
         "images/grid_world_optimal_policy.png",
         GRID_HEIGHT, GRID_WIDTH,
-        env.action_space.ACTION_SYMBOLS
+        env.ACTION_SYMBOLS
     )
 
 

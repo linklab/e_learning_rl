@@ -19,11 +19,11 @@ class ValueIteration:
         self.terminal_states = [(0, 0), (4, 4)]
 
         self.state_values = None
-        self.policy = np.empty([GRID_HEIGHT, GRID_WIDTH, self.env.action_space.NUM_ACTIONS])
+        self.policy = np.empty([GRID_HEIGHT, GRID_WIDTH, self.env.NUM_ACTIONS])
 
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
-                for action in self.env.action_space.ACTIONS:
+                for action in self.env.ACTIONS:
                     if (i, j) in TERMINAL_STATES:
                         self.policy[i][j][action] = 0.00
                     else:
@@ -51,8 +51,8 @@ class ValueIteration:
                         state_values[i][j] = 0.0
                     else:
                         values = []
-                        for action in self.env.action_space.ACTIONS:
-                            (next_i, next_j), reward, prob = env.get_state_action_probability(state=(i, j), action=action)
+                        for action in self.env.ACTIONS:
+                            (next_i, next_j), reward, prob = self.env.get_state_action_probability(state=(i, j), action=action)
 
                             # Bellman-Equation, 벨만 방정식 적용
                             values.append(
@@ -77,12 +77,12 @@ class ValueIteration:
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
                 if (i, j) in TERMINAL_STATES:
-                    for action in self.env.action_space.ACTIONS:
+                    for action in self.env.ACTIONS:
                         self.policy[i][j][action] = 0.0
                 else:
                     q_func = []
-                    for action in self.env.action_space.ACTIONS:
-                        (next_i, next_j), reward, prob = env.get_state_action_probability(state=(i, j), action=action)
+                    for action in self.env.ACTIONS:
+                        (next_i, next_j), reward, prob = self.env.get_state_action_probability(state=(i, j), action=action)
                         q_func.append(
                             prob * (reward + DISCOUNT_RATE * self.state_values[next_i, next_j])
                         )
@@ -114,11 +114,11 @@ class ValueIteration:
         return optimal_policy
 
     def calculate_grid_world_optimal_action_values(self):
-        action_value_function = np.zeros((GRID_HEIGHT, GRID_WIDTH, self.env.action_space.NUM_ACTIONS))
+        action_value_function = np.zeros((GRID_HEIGHT, GRID_WIDTH, self.env.NUM_ACTIONS))
         for i in range(GRID_HEIGHT):
             for j in range(GRID_WIDTH):
                 # 주어진 상태에서 가능한 모든 행동들의 결과로 다음 상태 및 보상 정보 갱신
-                for action in self.env.action_space.ACTIONS:
+                for action in self.env.ACTIONS:
                     (next_i, next_j), reward, prob = self.env.get_state_action_probability(state=(i, j), action=action)
 
                     action_value_function[i, j, action] = \
@@ -127,7 +127,7 @@ class ValueIteration:
         return action_value_function
 
 
-if __name__ == '__main__':
+def value_iteration_main():
     # 그리드 월드 환경 객체 생성
     env = GridWorld(
         height=GRID_HEIGHT,
@@ -155,12 +155,16 @@ if __name__ == '__main__':
         VI.calculate_grid_world_optimal_action_values(),
         'images/grid_world_vi_optimal_action_values.png',
         GRID_HEIGHT, GRID_WIDTH,
-        env.action_space.NUM_ACTIONS,
-        env.action_space.ACTION_SYMBOLS
+        env.NUM_ACTIONS,
+        env.ACTION_SYMBOLS
     )
 
     draw_grid_world_optimal_policy_image(
         VI.calculate_optimal_policy(),
         "images/grid_world_vi_optimal_policy.png",
-        GRID_HEIGHT, GRID_WIDTH, env.action_space.ACTION_SYMBOLS
+        GRID_HEIGHT, GRID_WIDTH, env.ACTION_SYMBOLS
     )
+
+
+if __name__ == '__main__':
+    value_iteration_main()

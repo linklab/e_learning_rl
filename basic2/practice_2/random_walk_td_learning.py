@@ -23,10 +23,10 @@ TRUE_VALUES[0:NUM_INTERNAL_STATES] = np.arange(1, 6) / 6.0
 def generate_initial_random_policy(env):
     policy = dict()
 
-    for state in env.observation_space.STATES:
+    for state in env.STATES:
         actions = []
         prob = []
-        for action in range(env.action_space.NUM_ACTIONS):
+        for action in range(env.NUM_ACTIONS):
             actions.append(action)
             prob.append(0.5)
         policy[state] = (actions, prob)

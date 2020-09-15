@@ -63,12 +63,12 @@ class EnvModel:
 
 # 비어있는 행동 가치 테이블을 0~1 사이의 임의의 값으로 초기화하며 생성함
 def generate_initial_q_value(env):
-    q_table = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
+    q_table = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.NUM_ACTIONS))
 
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
-            if (i, j) not in env.observation_space.TERMINAL_STATES:
-                for action in env.action_space.ACTIONS:
+            if (i, j) not in env.TERMINAL_STATES:
+                for action in env.ACTIONS:
                     q_table[i, j, action] = random.random()
     return q_table
 
@@ -80,10 +80,10 @@ def generate_initial_random_policy(env):
 
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
-            if (i, j) not in env.observation_space.TERMINAL_STATES:
+            if (i, j) not in env.TERMINAL_STATES:
                 actions = []
                 prob = []
-                for action in env.action_space.ACTIONS:
+                for action in env.ACTIONS:
                     actions.append(action)
                     prob.append(0.25)
 
@@ -101,15 +101,15 @@ def update_epsilon_greedy_policy(env, state, q_value, policy, current_episode):
 
     actions = []
     action_probs = []
-    for action in env.action_space.ACTIONS:
+    for action in env.ACTIONS:
         actions.append(action)
         if action in max_prob_actions:
             action_probs.append(
-                (1 - epsilon) / len(max_prob_actions) + epsilon / env.action_space.NUM_ACTIONS
+                (1 - epsilon) / len(max_prob_actions) + epsilon / env.NUM_ACTIONS
             )
         else:
             action_probs.append(
-                epsilon / env.action_space.NUM_ACTIONS
+                epsilon / env.NUM_ACTIONS
             )
 
     policy[state] = (actions, action_probs)

@@ -23,41 +23,41 @@ class CliffGridWorld():
         self.observation_space = gym.spaces.MultiDiscrete([self.HEIGHT, self.WIDTH])
         self.action_space = gym.spaces.Discrete(4)
 
-        self.observation_space.STATES = []
-        self.observation_space.num_states = self.WIDTH * self.HEIGHT
+        self.STATES = []
+        self.num_states = self.WIDTH * self.HEIGHT
 
         for i in range(self.HEIGHT):
             for j in range(self.WIDTH):
-                self.observation_space.STATES.append((i, j))
+                self.STATES.append((i, j))
 
         for state in terminal_states:     # 터미널 스테이트 제거
-            self.observation_space.STATES.remove(state)
+            self.STATES.remove(state)
 
         # 모든 가능한 행동
-        self.action_space.ACTION_UP = 0
-        self.action_space.ACTION_DOWN = 1
-        self.action_space.ACTION_LEFT = 2
-        self.action_space.ACTION_RIGHT = 3
+        self.ACTION_UP = 0
+        self.ACTION_DOWN = 1
+        self.ACTION_LEFT = 2
+        self.ACTION_RIGHT = 3
 
-        self.action_space.ACTIONS = [
-            self.action_space.ACTION_UP,
-            self.action_space.ACTION_DOWN,
-            self.action_space.ACTION_LEFT,
-            self.action_space.ACTION_RIGHT
+        self.ACTIONS = [
+            self.ACTION_UP,
+            self.ACTION_DOWN,
+            self.ACTION_LEFT,
+            self.ACTION_RIGHT
         ]
 
-        self.action_space.ACTION_SYMBOLS = ["\u21E7", "\u21E9", "\u21E6", "\u21E8"] # UP, DOWN, LEFT, RIGHT
-        #self.action_space.ACTION_SYMBOLS = ["\u2191", "\u2193", "\u2190", "\u2192"] # UP, DOWN, LEFT, RIGHT
-        self.action_space.NUM_ACTIONS = len(self.action_space.ACTIONS)
+        self.ACTION_SYMBOLS = ["\u21E7", "\u21E9", "\u21E6", "\u21E8"] # UP, DOWN, LEFT, RIGHT
+        #self.ACTION_SYMBOLS = ["\u2191", "\u2193", "\u2190", "\u2192"] # UP, DOWN, LEFT, RIGHT
+        self.NUM_ACTIONS = len(self.ACTIONS)
 
         # 시작 상태 위치
-        self.observation_space.START_STATE = start_state
+        self.START_STATE = start_state
 
         # 종료 상태 위치
-        self.observation_space.TERMINAL_STATES = terminal_states
+        self.TERMINAL_STATES = terminal_states
 
         # 웜홀 상태 위치
-        self.observation_space.CLIFF_STATES = cliff_states
+        self.CLIFF_STATES = cliff_states
 
         # 최대 타임 스텝
         self.max_steps = float('inf')
@@ -70,7 +70,7 @@ class CliffGridWorld():
         self.current_state = None
 
     def reset(self):
-        self.current_state = self.observation_space.START_STATE
+        self.current_state = self.START_STATE
         return self.current_state
 
     def moveto(self, state):
@@ -79,8 +79,8 @@ class CliffGridWorld():
     def is_cliff_state(self, state):
         i, j = state
 
-        if self.observation_space.CLIFF_STATES is not None and len(self.observation_space.CLIFF_STATES) > 0:
-            for cliff_info in self.observation_space.CLIFF_STATES:
+        if self.CLIFF_STATES is not None and len(self.CLIFF_STATES) > 0:
+            for cliff_info in self.CLIFF_STATES:
                 cliff_state = cliff_info[0]
                 if i == cliff_state[0] and j == cliff_state[1]:
                     return True
@@ -90,7 +90,7 @@ class CliffGridWorld():
         i, j = state
         next_state = None
 
-        for cliff_info in self.observation_space.CLIFF_STATES:
+        for cliff_info in self.CLIFF_STATES:
             cliff_state = cliff_info[0]
             cliff_prime_state = cliff_info[1]
 
@@ -103,7 +103,7 @@ class CliffGridWorld():
         i, j = state
         reward = None
 
-        for cliff_info in self.observation_space.CLIFF_STATES:
+        for cliff_info in self.CLIFF_STATES:
             cliff_state = cliff_info[0]
             cliff_reward = cliff_info[2]
 
@@ -120,20 +120,20 @@ class CliffGridWorld():
             next_state = self.get_next_state_cliff(state)
             next_i = next_state[0]
             next_j = next_state[1]
-        elif (i, j) in self.observation_space.TERMINAL_STATES:
+        elif (i, j) in self.TERMINAL_STATES:
             next_i = i
             next_j = j
         else:
-            if action == self.action_space.ACTION_UP:
+            if action == self.ACTION_UP:
                 next_i = max(i - 1, 0)
                 next_j = j
-            elif action == self.action_space.ACTION_DOWN:
+            elif action == self.ACTION_DOWN:
                 next_i = min(i + 1, self.HEIGHT - 1)
                 next_j = j
-            elif action == self.action_space.ACTION_LEFT:
+            elif action == self.ACTION_LEFT:
                 next_i = i
                 next_j = max(j - 1, 0)
-            elif action == self.action_space.ACTION_RIGHT:
+            elif action == self.ACTION_RIGHT:
                 next_i = i
                 next_j = min(j + 1, self.WIDTH - 1)
             else:
@@ -148,7 +148,7 @@ class CliffGridWorld():
         if self.is_cliff_state(state):
             reward = self.get_reward_cliff(state)
         else:
-            if (next_i, next_j) in self.observation_space.TERMINAL_STATES:
+            if (next_i, next_j) in self.TERMINAL_STATES:
                 reward = self.terminal_reward
             else:
                 if i == next_i and j == next_j:
@@ -175,7 +175,7 @@ class CliffGridWorld():
 
         self.current_state = (next_i, next_j)
 
-        if self.current_state in self.observation_space.TERMINAL_STATES:
+        if self.current_state in self.TERMINAL_STATES:
             done = True
         else:
             done = False
@@ -193,11 +193,11 @@ class CliffGridWorld():
             for j in range(self.WIDTH):
                 if self.current_state[0] == i and self.current_state[1] == j:
                     gridworld_str += "|   {0}   ".format("*")
-                elif (i, j) == self.observation_space.START_STATE:
+                elif (i, j) == self.START_STATE:
                     gridworld_str += "|   {0}   ".format("S")
-                elif (i, j) in self.observation_space.TERMINAL_STATES:
+                elif (i, j) in self.TERMINAL_STATES:
                     gridworld_str += "|   {0}   ".format("G") if j < 10 else "|   {0}    ".format("G")
-                elif self.observation_space.CLIFF_STATES and (i, j) in [state[0] for state in self.observation_space.CLIFF_STATES]:
+                elif self.CLIFF_STATES and (i, j) in [state[0] for state in self.CLIFF_STATES]:
                     gridworld_str += "|   {0}   ".format("W") if j < 10 else "|   {0}    ".format("W")
                 else:
                     gridworld_str += "|       " if j < 10 else "|        "
@@ -241,10 +241,10 @@ def main_cliff_gridworld():
     total_steps = 0
     while not done:
         total_steps += 1
-        action = env.action_space.sample()
+        action = env.sample()
         next_state, reward, done, _ = env.step(action)
         print("action: {0}, reward: {1}, done: {2}, total_steps: {3}".format(
-            env.action_space.ACTION_SYMBOLS[action],
+            env.ACTION_SYMBOLS[action],
             reward, done, total_steps
         ))
         env.render()

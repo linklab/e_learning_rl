@@ -25,10 +25,10 @@ MAX_EPISODES = 200
 def generate_initial_random_policy(env):
     policy = dict()
 
-    for state in env.observation_space.STATES:
+    for state in env.STATES:
         actions = []
         prob = []
-        for action in range(env.action_space.NUM_ACTIONS):
+        for action in range(env.NUM_ACTIONS):
             actions.append(action)
             prob.append(0.5)
         policy[state] = (actions, prob)
@@ -91,7 +91,7 @@ def first_visit_mc_prediction(env, policy, values, alpha=0.1, gamma=1.0):
 
         state_value_prediction_conditions = [
             state not in visited_states[:len(visited_states) - idx - 1],
-            state not in env.observation_space.TERMINAL_STATES
+            state not in env.TERMINAL_STATES
         ]
 
         if all(state_value_prediction_conditions):

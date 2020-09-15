@@ -1,13 +1,12 @@
+import random
 import time
-
-import gym
 
 # -------------------------------
 # T1 0 1 2 3 4 T2
 # -------------------------------
 
 
-class RandomWalk(gym.Env):
+class RandomWalk():
     def __init__(
             self,
             num_internal_states=5,         # 종료 상태를 제외한 내부 상태 개수
@@ -18,27 +17,25 @@ class RandomWalk(gym.Env):
         self.__version__ = "0.0.1"
 
         self.num_internal_states = num_internal_states
-        self.observation_space = gym.spaces.Discrete(num_internal_states + 2)
-        self.action_space = gym.spaces.Discrete(2)
 
-        self.observation_space.num_states = num_internal_states + 2
-        self.observation_space.STATES = [i for i in range(num_internal_states)]
-        self.observation_space.TERMINAL_STATES = ['T1', 'T2']
+        self.num_states = num_internal_states + 2
+        self.STATES = [i for i in range(num_internal_states)]
+        self.TERMINAL_STATES = ['T1', 'T2']
 
         # 모든 가능한 행동
-        self.action_space.ACTION_LEFT = 0
-        self.action_space.ACTION_RIGHT = 1
-        self.action_space.ACTION_SYMBOLS = ["\u2190", "\u2192"]
+        self.ACTION_LEFT = 0
+        self.ACTION_RIGHT = 1
+        self.ACTION_SYMBOLS = ["\u2190", "\u2192"]
 
         # 종료 상태를 제외한 임의의 상태에서 왼쪽 이동 또는 오른쪽 이동
-        self.action_space.ACTIONS = [
-            self.action_space.ACTION_LEFT,
-            self.action_space.ACTION_RIGHT
+        self.ACTIONS = [
+            self.ACTION_LEFT,
+            self.ACTION_RIGHT
         ]
-        self.action_space.NUM_ACTIONS = len(self.action_space.ACTIONS)
+        self.NUM_ACTIONS = len(self.ACTIONS)
 
         # 시작 상태 위치
-        self.observation_space.START_STATE = self.observation_space.STATES[int(num_internal_states / 2)]
+        self.START_STATE = self.STATES[int(num_internal_states / 2)]
 
         self.transition_reward = transition_reward
 
@@ -49,22 +46,22 @@ class RandomWalk(gym.Env):
         self.current_state = None
 
     def reset(self):
-        self.current_state = self.observation_space.START_STATE
+        self.current_state = self.START_STATE
         return self.current_state
 
     def moveto(self, state):
         self.current_state = state
 
     def get_next_state(self, state, action):
-        if state in self.observation_space.TERMINAL_STATES:
+        if state in self.TERMINAL_STATES:
             next_state = state
         else:
-            if action == self.action_space.ACTION_LEFT:
+            if action == self.ACTION_LEFT:
                 if state == 0:
                     next_state = 'T1'
                 else:
                     next_state = state - 1
-            elif action == self.action_space.ACTION_RIGHT:
+            elif action == self.ACTION_RIGHT:
                 if state == self.num_internal_states - 1:
                     next_state = 'T2'
                 else:
@@ -101,7 +98,7 @@ class RandomWalk(gym.Env):
 
         self.current_state = next_state
 
-        if self.current_state in self.observation_space.TERMINAL_STATES:
+        if self.current_state in self.TERMINAL_STATES:
             done = True
         else:
             done = False
@@ -111,11 +108,14 @@ class RandomWalk(gym.Env):
     def render(self, mode='human'):
         print(self.__str__(), end="\n\n")
 
+    def get_random_action(self):
+        return random.choice(self.ACTIONS)
+
     def __str__(self):
         randomwalk_str = ""
         randomwalk_str += " T1 " + " ".join(["{0}".format(i) for i in range(self.num_internal_states)]) + " T2\n"
 
-        if self.current_state in self.observation_space.STATES:
+        if self.current_state in self.STATES:
             blank = "    " + "  " * self.current_state
         elif self.current_state == 'T1':
             blank = " "
@@ -139,15 +139,15 @@ def main():
     total_steps = 0
     while not done:
         total_steps += 1
-        action = env.action_space.sample()
+        action = env.get_random_action()
         next_state, reward, done, _ = env.step(action)
         print("action: {0}, reward: {1}, done: {2}, total_steps: {3}".format(
-            env.action_space.ACTION_SYMBOLS[action],
+            env.ACTION_SYMBOLS[action],
             reward, done, total_steps
         ))
         env.render()
 
-        time.sleep(3)
+        time.sleep(1)
 
 
 if __name__ == "__main__":

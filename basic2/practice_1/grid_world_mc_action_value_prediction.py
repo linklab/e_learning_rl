@@ -31,7 +31,7 @@ def generate_random_episode(env):
     done = False
     while not done:
         # 상태에 관계없이 항상 4가지 행동 중 하나를 선택하여 수행
-        action = random.randrange(env.action_space.NUM_ACTIONS)
+        action = random.randrange(env.NUM_ACTIONS)
 
         next_state, reward, done, _ = env.step(action)
 
@@ -46,11 +46,11 @@ def generate_random_episode(env):
 # 첫 방문 행동 가치 MC 예측
 def first_visit_mc_prediction(env, gamma, num_iter):
     # 비어있는 상태-가치 함수를 0으로 초기화하며 생성함
-    state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
+    state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.NUM_ACTIONS))
     returns = dict()
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
-            for action in env.action_space.ACTIONS:
+            for action in env.ACTIONS:
                 returns[((i, j), action)] = list()
 
     for i in range(num_iter):
@@ -75,11 +75,11 @@ def first_visit_mc_prediction(env, gamma, num_iter):
 # 모든 방문 행동 가치 MC 예측
 def every_visit_mc_prediction(env, gamma, num_iter):
     # 비어있는 상태-가치 함수를 0으로 초기화하며 생성함
-    state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
+    state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.NUM_ACTIONS))
     returns = dict()
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
-            for action in env.action_space.ACTIONS:
+            for action in env.ACTIONS:
                 returns[((i, j), action)] = list()
 
     for i in range(num_iter):
@@ -122,8 +122,8 @@ def main():
         state_action_values,
         'images/grid_world_mc_action_values_first_visit.png',
         GRID_HEIGHT, GRID_WIDTH,
-        env.action_space.NUM_ACTIONS,
-        env.action_space.ACTION_SYMBOLS
+        env.NUM_ACTIONS,
+        env.ACTION_SYMBOLS
     )
 
     state_action_values, returns = every_visit_mc_prediction(env, 1.0, 10000)
@@ -131,8 +131,8 @@ def main():
         state_action_values,
         'images/grid_world_mc_action_values_every_visit.png',
         GRID_HEIGHT, GRID_WIDTH,
-        env.action_space.NUM_ACTIONS,
-        env.action_space.ACTION_SYMBOLS
+        env.NUM_ACTIONS,
+        env.ACTION_SYMBOLS
     )
 
 

@@ -31,7 +31,7 @@ def generate_random_episode(env):
     done = False
     while not done:
         # 상태에 관계없이 항상 4가지 행동 중 하나를 선택하여 수행
-        action = random.randrange(env.action_space.NUM_ACTIONS)
+        action = random.randrange(env.NUM_ACTIONS)
 
         next_state, reward, done, _ = env.step(action)
 

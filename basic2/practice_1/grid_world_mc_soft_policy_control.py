@@ -14,12 +14,12 @@ EPSILON = 0.1
 
 # 비어있는 행동 가치 테이블을 0으로 초기화하며 생성함
 def generate_initial_q_value_and_return(env):
-    state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.action_space.NUM_ACTIONS))
+    state_action_values = np.zeros((GRID_HEIGHT, GRID_WIDTH, env.NUM_ACTIONS))
     returns = dict()
 
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
-            for action in env.action_space.ACTIONS:
+            for action in env.ACTIONS:
                 returns[((i, j), action)] = list()
 
     return state_action_values, returns
@@ -34,7 +34,7 @@ def generate_initial_random_policy(env):
         for j in range(GRID_WIDTH):
             actions = []
             prob = []
-            for action in env.action_space.ACTIONS:
+            for action in env.ACTIONS:
                 actions.append(action)
                 prob.append(0.25)
             policy[(i, j)] = (actions, prob)
@@ -88,22 +88,22 @@ def generate_soft_greedy_policy(env, state_action_values, policy):
             actions = []
             action_probs = []
             if (i, j) in TERMINAL_STATES:
-                for action in env.action_space.ACTIONS:
+                for action in env.ACTIONS:
                     actions.append(action)
                     action_probs.append(0.25)
                 new_policy[(i, j)] = (actions, action_probs)
             else:
                 max_prob_actions = [action_ for action_, value_ in enumerate(state_action_values[i, j, :]) if
                                     value_ == np.max(state_action_values[i, j, :])]
-                for action in env.action_space.ACTIONS:
+                for action in env.ACTIONS:
                     actions.append(action)
                     if action in max_prob_actions:
                         action_probs.append(
-                            (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.action_space.NUM_ACTIONS
+                            (1 - EPSILON) / len(max_prob_actions) + EPSILON / env.NUM_ACTIONS
                         )
                     else:
                         action_probs.append(
-                            EPSILON / env.action_space.NUM_ACTIONS
+                            EPSILON / env.NUM_ACTIONS
                         )
 
                 new_policy[(i, j)] = (actions, action_probs)
@@ -159,7 +159,7 @@ def main():
         policy,
         "images/grid_world_mc_soft_policy.png",
         GRID_HEIGHT, GRID_WIDTH,
-        env.action_space.ACTION_SYMBOLS
+        env.ACTION_SYMBOLS
     )
 
 
