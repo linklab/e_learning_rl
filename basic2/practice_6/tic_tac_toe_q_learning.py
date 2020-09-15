@@ -84,7 +84,10 @@ def q_learning_for_agent_1_vs_dummy():
     game_status.agent_1_count_state_updates = agent_1.count_state_updates
     draw_performance(game_status, 'q_learning_for_agent_1_vs_dummy.png', MAX_EPISODES)
 
+    # 훈련 종료 직후 완전 탐욕적으로 정책 설정
     agent_1.make_greedy_policy()
+
+    # 학습 완료된 에이전트가 보유하고 있는 Q Table과 Policy 저장
     with open(os.path.join('models', 'agent_1.bin'), 'wb') as f:
         q_table_and_policy = {
             'q_table': agent_1.q_table,
@@ -172,7 +175,10 @@ def q_learning_for_dummy_vs_agent_2():
     game_status.agent_2_count_state_updates = agent_2.count_state_updates
     draw_performance(game_status, 'q_learning_for_dummy_vs_agent_2.png', MAX_EPISODES)
 
+    # 훈련 종료 직후 완전 탐욕적으로 정책 설정
     agent_2.make_greedy_policy()
+
+    # 학습 완료된 에이전트가 보유하고 있는 Q Table과 Policy 저장
     with open(os.path.join('models', 'agent_2.bin'), 'wb') as f:
         q_table_and_policy = {
             'q_table': agent_2.q_table,
@@ -276,7 +282,12 @@ def q_learning_for_self_play():
     game_status.agent_2_count_state_updates = agent_2.count_state_updates
     draw_performance(game_status, "q_learning_for_self_play.png", MAX_EPISODES)
 
+    # 훈련 종료 직후 완전 탐욕적으로 정책 설정
+    # agent_1과 agent_2는 동일한 에이전트이므로 agent_1에 대해서만 정책 설정
     agent_1.make_greedy_policy()
+
+    # 학습 완료된 에이전트가 보유하고 있는 Q Table과 Policy 저장
+    # agent_1과 agent_2는 동일한 에이전트이므로 agent_1에 대해서만 Q Table과 Policy 저장
     with open(os.path.join('models', 'self_agent.bin'), 'wb') as f:
         q_table_and_policy = {
             'q_table': agent_1.q_table,

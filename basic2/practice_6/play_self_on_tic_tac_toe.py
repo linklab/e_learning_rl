@@ -36,8 +36,8 @@ def self_play():
             print("[시작 상태]")
             env.render()
 
-        episode_done = False
-        while not episode_done:
+        done = False
+        while not done:
             total_steps += 1
             action = current_agent.get_action(state)
 
@@ -56,7 +56,7 @@ def self_play():
                     else:
                         print("비겼습니다!")
 
-                episode_done = done
+                done = done
                 print_game_statistics(info, episode, 0.0, total_steps, game_status)
             else:
                 state = next_state
