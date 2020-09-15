@@ -20,13 +20,22 @@ class GameStatus:
         self.draw_info_list = []
         self.agent_1_avg_q_list = []
         self.agent_2_avg_q_list = []
-        self.agent_1_q_learning_loss = []
-        self.agent_2_q_learning_loss = []
+        self.agent_1_episode_td_error = []
+        self.agent_2_episode_td_error = []
         self.epsilon_list = []
 
         self.player_1_win_rate_over_100_games = []
         self.player_2_win_rate_over_100_games = []
         self.draw_rate_over_100_games = []
+
+        self.agent_1_count_state_updates = None
+        self.agent_2_count_state_updates = None
+
+    def set_agent_1_episode_td_error(self, agent_1_episode_td_error):
+        self.agent_1_episode_td_error.append(agent_1_episode_td_error)
+
+    def set_agent_2_episode_td_error(self, agent_2_episode_td_error):
+        self.agent_2_episode_td_error.append(agent_2_episode_td_error)
 
 
 def draw_performance(game_status, file_name, max_episodes):
@@ -35,7 +44,7 @@ def draw_performance(game_status, file_name, max_episodes):
 
     figure, _ = plt.subplots(nrows=4, ncols=1)
 
-    plt.subplot(411)
+    plt.subplot(511)
     for i in range(3):
         if i == 0:
             values = game_status.player_1_win_rate_over_100_games[::100]
@@ -49,7 +58,7 @@ def draw_performance(game_status, file_name, max_episodes):
     plt.ylabel('Winning Rate')
     plt.legend()
 
-    plt.subplot(412)
+    plt.subplot(512)
     if game_status.agent_1_avg_q_list:
         plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_1_avg_q_list, label="Agent 1")
     if game_status.agent_2_avg_q_list:
@@ -59,21 +68,42 @@ def draw_performance(game_status, file_name, max_episodes):
     plt.ylabel('Average Q Values')
     plt.legend()
 
-    plt.subplot(413)
-    if game_status.agent_1_q_learning_loss:
-        plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_1_q_learning_loss, label="Agent 1")
-    if game_status.agent_2_avg_q_list:
-        plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_2_q_learning_loss, label="Agent 2")
+    plt.subplot(513)
+    if game_status.agent_1_episode_td_error:
+        plt.plot(range(1, max_episodes + 1, 100), game_status.agent_1_episode_td_error[::100], label="Agent 1")
+        #plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_1_episode_td_error[::10000], label="Agent 1")
+    if game_status.agent_2_episode_td_error:
+        plt.plot(range(1, max_episodes + 1, 100), game_status.agent_2_episode_td_error[::100], label="Agent 1")
+        #plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_2_episode_td_error[::10000], label="Agent 2")
 
     plt.xlabel('Episode')
-    plt.ylabel('Q Learning Loss')
+    plt.ylabel('Q Learning TD Error')
     plt.legend()
 
-    plt.subplot(414)
+    plt.subplot(514)
     plt.plot(range(1, max_episodes + 1, 10000), game_status.epsilon_list, label="Epsilon")
 
+    plt.subplot(515)
+    if game_status.agent_1_count_state_updates:
+        data = [(k, v) for k, v in game_status.agent_1_count_state_updates.items()]
+        data.sort(key=lambda x: x[0])
+        keys = [k[0] for k in data]
+        values = [k[1] for k in data]
+
+        plt.plot(keys, values, label="Number of updates (agent 1)")
+        plt.yscale('log')
+
+    if game_status.agent_2_count_state_updates:
+        data = [(k, v) for k, v in game_status.agent_2_count_state_updates.items()]
+        data.sort(key=lambda x: x[0])
+        keys = [k[0] for k in data]
+        values = [k[1] for k in data]
+
+        plt.plot(keys, values, label="Number of updates (agent 2)")
+        plt.yscale('log')
+
     plt.xlabel('Episode')
-    plt.ylabel('Epsilon')
+    plt.ylabel('Number of updates')
     plt.legend()
 
     plt.tight_layout()
@@ -118,11 +148,9 @@ def print_game_statistics(info, episode, epsilon, total_steps, game_status, agen
     if episode % 10000 == 0:
         if isinstance(agent_1, Q_Learning_Agent):
             game_status.agent_1_avg_q_list.append(agent_1.avg_q_value())
-            game_status.agent_1_q_learning_loss.append(agent_1.q_learning_loss)
 
         if isinstance(agent_2, Q_Learning_Agent):
             game_status.agent_2_avg_q_list.append(agent_2.avg_q_value())
-            game_status.agent_2_q_learning_loss.append(agent_2.q_learning_loss)
 
         game_status.epsilon_list.append(epsilon)
 
