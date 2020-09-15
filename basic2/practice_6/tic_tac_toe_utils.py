@@ -86,20 +86,20 @@ def draw_performance(game_status, file_name, max_episodes):
     plt.subplot(515)
     if game_status.agent_1_count_state_updates:
         data = [(k, v) for k, v in game_status.agent_1_count_state_updates.items()]
-        data.sort(key=lambda x: x[0])
+        data.sort(key=lambda x: x[1], reverse=True)
         keys = [k[0] for k in data]
         values = [k[1] for k in data]
 
-        plt.plot(keys, values, label="Number of updates (agent 1)")
+        plt.bar(range(0, len(values)), values, label="Number of updates (agent 1)")
         plt.yscale('log')
 
     if game_status.agent_2_count_state_updates:
         data = [(k, v) for k, v in game_status.agent_2_count_state_updates.items()]
-        data.sort(key=lambda x: x[0])
+        data.sort(key=lambda x: x[1], reverse=True)
         keys = [k[0] for k in data]
         values = [k[1] for k in data]
 
-        plt.plot(keys, values, label="Number of updates (agent 2)")
+        plt.bar(range(0, len(values)), values, label="Number of updates (agent 2)")
         plt.yscale('log')
 
     plt.xlabel('Episode')
@@ -112,20 +112,20 @@ def draw_performance(game_status, file_name, max_episodes):
     plt.close()
 
 
-def epsilon_scheduled(current_episode, last_scheduled_episodes, initial_epsilon, final_epsilon):
-    fraction = min(current_episode / last_scheduled_episodes, 1.0)
-    epsilon = min(initial_epsilon + fraction * (final_epsilon - initial_epsilon), initial_epsilon)
-    return epsilon
+# def epsilon_scheduled(current_episode, last_scheduled_episodes, initial_epsilon, final_epsilon):
+#     fraction = min(current_episode / last_scheduled_episodes, 1.0)
+#     epsilon = min(initial_epsilon + fraction * (final_epsilon - initial_epsilon), initial_epsilon)
+#     return epsilon
 
 
 # https://medium.com/analytics-vidhya/stretched-exponential-decay-function-for-epsilon-greedy-algorithm-98da6224c22f
-def epsilon_scheduled(current_episode, max_episodes):
+def epsilon_scheduled(current_episode, max_episodes, initial_epsilon, final_epsilon):
     A = 0.3
-    B = 0.7
-    C = 0.1
+    B = 0.2
+    C = 0.2
     standardized_time = (current_episode - A * max_episodes)/(B * max_episodes)
     cosh = np.cosh(math.exp(-standardized_time))
-    epsilon = 1.1 - (1 / cosh + (current_episode * C / max_episodes))
+    epsilon = max(initial_epsilon - (1 / cosh + (current_episode * C / max_episodes)), final_epsilon)
     return epsilon
 
 
