@@ -37,9 +37,11 @@ class Q_Learning_Agent:
         self.env = env
         self.q_table = self.generate_initial_q_value()
         self.policy = self.generate_initial_random_policy()
-        self.q_learning_loss = None
+        self.count_state_updates = {}
+        for state_id in env.ALL_STATES:
+            self.count_state_updates[state_id] = 0
 
-    # 비어있는 행동 가치 테이블을 0~1 사이의 임의의 값으로 초기화하며 생성함
+    # 비어있는 행동 가치 테이블을 0.0 값으로 초기화하며 생성함
     # q_value 테이블의 상태: state_id, q_value 테이블의 행동: 해당 상태에서의 available_action_id
     def generate_initial_q_value(self):
         q_table = dict()
@@ -59,10 +61,10 @@ class Q_Learning_Agent:
             for available_action_id in available_action_ids:
                 q_value_list.append(self.q_table[state_id][available_action_id])
 
-        return np.average(q_value_list)
+        return np.mean(q_value_list)
 
-    # 모든 상태에서 수행 가능한 행동에 맞춰 임의의 정책을 생성함
-    # 초기에 각 행동의 선택 확률은 모두 같음
+    # 모든 상태에서 수행 가능한 행동에 맞춰 임의의 정책을 생성
+    # 초기에 각 상태에서 수행할 수 있는 행동의 선택 확률은 모두 같음
     def generate_initial_random_policy(self):
         policy = dict()
 
@@ -81,6 +83,7 @@ class Q_Learning_Agent:
 
     # epsilon-탐욕적 정책 갱신
     def update_epsilon_greedy_policy(self, state_id, epsilon):
+        # Q값이 가장 큰 행동 선별
         max_q_value = max(self.q_table[state_id].values())
         max_prob_actions = []
         for available_position, q_value in self.q_table[state_id].items():
@@ -89,9 +92,12 @@ class Q_Learning_Agent:
 
         action_ids = []
         action_probs = []
+
+        # 현재 상태에서 수행가능한 모든 행동 취합
         available_action_ids = self.env.ALL_STATES[state_id].get_available_actions()
         num_available_actions = len(available_action_ids)
 
+        # 각 수행가능한 행동별로 epsilon-탐욕적 정책 갱신
         for available_position in available_action_ids:
             action_ids.append(available_position)
             if available_position in max_prob_actions:
@@ -106,15 +112,19 @@ class Q_Learning_Agent:
         self.policy[state_id] = (action_ids, action_probs)
 
     def q_learning(self, state, action_id, next_state, reward, done, epsilon):
+        # 각 상태별로 갱신 횟수 관리
+        self.count_state_updates[state.identifier()] += 1
+
         # Q-러닝 갱신
         if done:
             target_value = reward
         else:
             target_value = reward + GAMMA * max(self.q_table[next_state.identifier()].values())
 
-        self.q_learning_loss = target_value - self.q_table[state.identifier()][action_id]
-        self.q_table[state.identifier()][action_id] += ALPHA * self.q_learning_loss
+        td_error = target_value - self.q_table[state.identifier()][action_id]
+        self.q_table[state.identifier()][action_id] += ALPHA * td_error
         self.update_epsilon_greedy_policy(state.identifier(), epsilon=epsilon)
+        return td_error
 
     def get_action(self, current_state):
         action_ids, action_probs = self.policy[current_state.identifier()]
