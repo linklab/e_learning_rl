@@ -1,3 +1,4 @@
+import math
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -84,6 +85,17 @@ def draw_performance(game_status, file_name, max_episodes):
 def epsilon_scheduled(current_episode, last_scheduled_episodes, initial_epsilon, final_epsilon):
     fraction = min(current_episode / last_scheduled_episodes, 1.0)
     epsilon = min(initial_epsilon + fraction * (final_epsilon - initial_epsilon), initial_epsilon)
+    return epsilon
+
+
+# https://medium.com/analytics-vidhya/stretched-exponential-decay-function-for-epsilon-greedy-algorithm-98da6224c22f
+def epsilon_scheduled(current_episode, max_episodes):
+    A = 0.3
+    B = 0.7
+    C = 0.1
+    standardized_time = (current_episode - A * max_episodes)/(B * max_episodes)
+    cosh = np.cosh(math.exp(-standardized_time))
+    epsilon = 1.1 - (1 / cosh + (current_episode * C / max_episodes))
     return epsilon
 
 

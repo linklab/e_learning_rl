@@ -8,10 +8,10 @@ from basic2.practice_6.tic_tac_toe_utils import print_step_status, print_game_st
 
 INITIAL_EPSILON = 1.0
 FINAL_EPSILON = 0.01
-LAST_SCHEDULED_EPISODES = 50000
+LAST_SCHEDULED_EPISODES = 10000
 
 # 최대 반복 에피소드(게임) 횟수
-MAX_EPISODES = 500000
+MAX_EPISODES = 100000
 
 STEP_VERBOSE = False
 BOARD_RENDER = False
@@ -30,7 +30,8 @@ def q_learning_for_agent_1_vs_dummy():
     for episode in range(1, MAX_EPISODES + 1):
         state = env.reset()
 
-        epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        epsilon = epsilon_scheduled(episode, MAX_EPISODES)
 
         if BOARD_RENDER:
             env.render()
@@ -101,7 +102,8 @@ def q_learning_for_dummy_vs_agent_2():
 
         current_agent = agent_1
 
-        epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        epsilon = epsilon_scheduled(episode, MAX_EPISODES)
 
         if BOARD_RENDER:
             env.render()
@@ -183,7 +185,8 @@ def q_learning_for_self_play():
     for episode in range(1, MAX_EPISODES + 1):
         state = env.reset()
 
-        epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        epsilon = epsilon_scheduled(episode, MAX_EPISODES)
 
         if BOARD_RENDER:
             env.render()
