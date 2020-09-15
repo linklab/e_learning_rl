@@ -31,8 +31,8 @@ def q_learning_for_agent_1_vs_dummy():
     for episode in range(1, MAX_EPISODES + 1):
         state = env.reset()
 
-        #epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
-        epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
 
         if BOARD_RENDER:
             env.render()
@@ -107,8 +107,8 @@ def q_learning_for_dummy_vs_agent_2():
 
         current_agent = agent_1
 
-        #epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
-        epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
 
         if BOARD_RENDER:
             env.render()
@@ -193,8 +193,8 @@ def q_learning_for_self_play():
     for episode in range(1, MAX_EPISODES + 1):
         state = env.reset()
 
-        #epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
-        epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
 
         if BOARD_RENDER:
             env.render()
