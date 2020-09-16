@@ -7,6 +7,7 @@ from basic2.practice_6.tic_tac_toe_agents import Q_Learning_Agent
 
 linestyles = ['-', '--', ':']
 legends = ["AGENT-1 WIN", "AGENT-2 WIN", "DRAW"]
+GAME_STATUS_PRINT_PERIOD_EPISODES = 5000
 
 
 class GameStatus:
@@ -39,6 +40,45 @@ class GameStatus:
 
 
 def draw_performance(game_status, file_name, max_episodes):
+    plt.clf()
+    plt.rcParams["figure.figsize"] = (10, 6)
+
+    figure, _ = plt.subplots(nrows=4, ncols=1)
+
+    plt.subplot(211)
+    if game_status.agent_1_episode_td_error:
+        plt.plot(range(1, max_episodes + 1, 100), game_status.agent_1_episode_td_error[::100], label="Agent 1")
+        #plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_1_episode_td_error[::10000], label="Agent 1")
+    if game_status.agent_2_episode_td_error:
+        plt.plot(range(1, max_episodes + 1, 100), game_status.agent_2_episode_td_error[::100], label="Agent 1")
+        #plt.plot(range(1, max_episodes + 1, 10000), game_status.agent_2_episode_td_error[::10000], label="Agent 2")
+
+    plt.xlabel('Episode')
+    plt.ylabel('Q Learning TD Error')
+    plt.legend()
+
+    plt.subplot(212)
+    for i in range(3):
+        if i == 0:
+            values = game_status.player_1_win_rate_over_100_games[::100]
+        elif i == 1:
+            values = game_status.player_2_win_rate_over_100_games[::100]
+        else:
+            values = game_status.draw_rate_over_100_games[::100]
+        plt.plot(range(1, max_episodes + 1, 100), values, linestyle=linestyles[i], label=legends[i])
+
+    plt.xlabel('Episode')
+    plt.ylabel('Winning Rate')
+    plt.legend()
+
+
+    plt.tight_layout()
+
+    plt.savefig(os.path.join('images', file_name))
+    plt.close()
+
+
+def draw_full_performance(game_status, file_name, max_episodes):
     plt.clf()
     plt.rcParams["figure.figsize"] = (10, 12)
 
@@ -112,14 +152,14 @@ def draw_performance(game_status, file_name, max_episodes):
     plt.close()
 
 
-# def epsilon_scheduled(current_episode, last_scheduled_episodes, initial_epsilon, final_epsilon):
-#     fraction = min(current_episode / last_scheduled_episodes, 1.0)
-#     epsilon = min(initial_epsilon + fraction * (final_epsilon - initial_epsilon), initial_epsilon)
-#     return epsilon
+def epsilon_scheduled(current_episode, last_scheduled_episodes, initial_epsilon, final_epsilon):
+    fraction = min(current_episode / last_scheduled_episodes, 1.0)
+    epsilon = min(initial_epsilon + fraction * (final_epsilon - initial_epsilon), initial_epsilon)
+    return epsilon
 
 
 # https://medium.com/analytics-vidhya/stretched-exponential-decay-function-for-epsilon-greedy-algorithm-98da6224c22f
-def epsilon_scheduled(current_episode, max_episodes, initial_epsilon, final_epsilon):
+def epsilon_stretched_exponential_scheduled(current_episode, max_episodes, initial_epsilon, final_epsilon):
     A = 0.3
     B = 0.2
     C = 0.2
@@ -154,15 +194,16 @@ def print_game_statistics(info, episode, epsilon, total_steps, game_status, agen
 
         game_status.epsilon_list.append(epsilon)
 
-    print("### GAMES DONE: {0} | episolon: {1:.2f} | total_steps: {2} | "
-          "agent_1_win : agent_2_win : draw = {3} : {4} : {5} | "
-          "winning_rate_over_recent_100_games --> {6:4.1f}% : {7:4.1f}% : {8:4.1f}%".format(
-        episode, epsilon, total_steps,
-        game_status.num_player_1_win, game_status.num_player_2_win, game_status.num_draw,
-        game_status.player_1_win_rate_over_100_games[-1],
-        game_status.player_2_win_rate_over_100_games[-1],
-        game_status.draw_rate_over_100_games[-1]
-    ))
+    if episode % GAME_STATUS_PRINT_PERIOD_EPISODES == 0:
+        print("### GAMES DONE: {0} | episolon: {1:.2f} | total_steps: {2} | "
+              "agent_1_win : agent_2_win : draw = {3} : {4} : {5} | "
+              "winning_rate_over_recent_100_games --> {6:4.1f}% : {7:4.1f}% : {8:4.1f}%".format(
+            episode, epsilon, total_steps,
+            game_status.num_player_1_win, game_status.num_player_2_win, game_status.num_draw,
+            game_status.player_1_win_rate_over_100_games[-1],
+            game_status.player_2_win_rate_over_100_games[-1],
+            game_status.draw_rate_over_100_games[-1]
+        ))
 
 
 def print_step_status(agent, state, action, next_state, reward, done, info, env, step_verbose, board_render):

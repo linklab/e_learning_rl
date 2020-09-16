@@ -255,7 +255,7 @@ def td_comparison(env):
     print_optimal_policy(env, q_table_expected_sarsa)
 
 
-if __name__ == '__main__':
+def cliff_td_comparison_main():
     # 이미지 저장 경로 확인 및 생성
     if not os.path.exists('images/'):
         os.makedirs('images/')
@@ -272,4 +272,8 @@ if __name__ == '__main__':
     )
 
     td_comparison(env)
+
+
+if __name__ == '__main__':
+    cliff_td_comparison_main()
 

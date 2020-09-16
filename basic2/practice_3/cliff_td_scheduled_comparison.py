@@ -208,7 +208,7 @@ def print_optimal_policy(env, q_value):
     print()
 
 
-def td_comparison(env):
+def td_epsilon_scheduled_comparison(env):
     rewards_expected_sarsa = np.zeros(MAX_EPISODES)
     rewards_sarsa = np.zeros(MAX_EPISODES)
     rewards_q_learning = np.zeros(MAX_EPISODES)
@@ -267,7 +267,7 @@ def td_comparison(env):
     print_optimal_policy(env, q_table_expected_sarsa)
 
 
-if __name__ == '__main__':
+def td_epsilon_scheduled_comparison_main():
     # 이미지 저장 경로 확인 및 생성
     if not os.path.exists('images/'):
         os.makedirs('images/')
@@ -283,5 +283,9 @@ if __name__ == '__main__':
         cliff_states=[(s, START_STATE, -100.0) for s in CLIFF_STATES]
     )
 
-    td_comparison(env)
+    td_epsilon_scheduled_comparison(env)
+
+
+if __name__ == '__main__':
+    td_epsilon_scheduled_comparison_main()
 

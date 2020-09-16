@@ -4,6 +4,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
+from basic.practice_1.cliff import CliffGridWorld
 from basic.practice_1.gridworld import GridWorld
 
 # 그리드월드 높이와 너비
@@ -162,6 +163,7 @@ def cliff_dyna_q(env):
     performance_steps = np.zeros((len(planning_repeats), MAX_EPISODES))
 
     for run in range(TOTAL_RUNS):
+        print("RUN: {0}".format(run))
         for i, planning_repeat in enumerate(planning_repeats):
             # 행동 가치 저장
             q_table = generate_initial_q_value(env)
@@ -189,12 +191,12 @@ def cliff_dyna_q(env):
     plt.close()
 
 
-if __name__ == '__main__':
+def cliff_dyna_q_main():
     # 이미지 저장 경로 확인 및 생성
     if not os.path.exists('images/'):
         os.makedirs('images/')
 
-    env = GridWorld(
+    env = CliffGridWorld(
         height=GRID_HEIGHT,
         width=GRID_WIDTH,
         start_state=START_STATE,
@@ -202,7 +204,13 @@ if __name__ == '__main__':
         transition_reward=-1.0,
         terminal_reward=-1.0,
         outward_reward=-1.0,
-        warm_hole_states=[(s, START_STATE, -100.0) for s in CLIFF_STATES]
+        cliff_states=[(s, START_STATE, -100.0) for s in CLIFF_STATES]
     )
+    env.reset()
+    env.render()
 
     cliff_dyna_q(env)
+
+
+if __name__ == '__main__':
+    cliff_dyna_q_main()
