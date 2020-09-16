@@ -20,7 +20,7 @@ def get_exploring_start_state():
 
 
 # 환경에서 무작위로 에피소드 생성
-def generate_random_episode(env):
+def generate_random_episode_and_state_actions(env):
     episode = []
     visited_state_actions = []
 
@@ -54,7 +54,7 @@ def first_visit_mc_prediction(env, gamma, num_iter):
                 returns[((i, j), action)] = list()
 
     for i in range(num_iter):
-        episode, visited_state_actions = generate_random_episode(env)
+        episode, visited_state_actions = generate_random_episode_and_state_actions(env)
 
         G = 0
         for idx, ((state, action), reward) in enumerate(reversed(episode)):
@@ -83,7 +83,7 @@ def every_visit_mc_prediction(env, gamma, num_iter):
                 returns[((i, j), action)] = list()
 
     for i in range(num_iter):
-        episode, _ = generate_random_episode(env)
+        episode, _ = generate_random_episode_and_state_actions(env)
 
         G = 0
         for idx, ((state, action), reward) in enumerate(reversed(episode)):
@@ -100,7 +100,7 @@ def every_visit_mc_prediction(env, gamma, num_iter):
     return state_action_values, returns
 
 
-def main():
+def action_value_prediction_main():
     # 이미지 저장 경로 확인 및 생성
     if not os.path.exists('images/'):
         os.makedirs('images/')
@@ -137,4 +137,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    action_value_prediction_main()

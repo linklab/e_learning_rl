@@ -1,7 +1,6 @@
 # 사용 패키지 임포트
 import numpy as np
 from basic.practice_1.randomwalk import RandomWalk
-from basic2.practice_1.grid_world_mc_state_value_prediction import generate_random_episode
 import matplotlib.pyplot as plt
 import os
 
@@ -139,7 +138,7 @@ def mc_td_comparison(env):
     plt.close()
 
 
-def main():
+def mc_td_comparison_main():
     # 이미지 저장 경로 확인 및 생성
     if not os.path.exists('images/'):
         os.makedirs('images/')
@@ -154,4 +153,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    mc_td_comparison_main()

@@ -51,7 +51,7 @@ def generate_initial_random_policy(env):
 
 
 # 환경에서 현재 정책에 입각하여 에피소드(현재 상태, 행동, 다음 상태, 보상) 생성
-def generate_random_episode(env, policy):
+def generate_random_episode_for_trajectory(env, policy):
     episode = []
     visited_state_actions = []
 
@@ -121,7 +121,7 @@ def generate_greedy_policy(env, state_action_values, policy):
     return new_policy, error
 
 
-def main():
+def exploring_start_control_main():
     # 그리드 월드 환경 객체 생성
     env = GridWorld(
         height=GRID_HEIGHT,
@@ -145,7 +145,7 @@ def main():
     while iter_num < MAX_EPISODES:
         iter_num += 1
 
-        episode, visited_state_actions = generate_random_episode(env, policy)
+        episode, visited_state_actions = generate_random_episode_for_trajectory(env, policy)
         print("*** 에피소드 생성 완료 ***")
 
         first_visit_mc_prediction(state_action_values, returns, episode, visited_state_actions)
@@ -165,4 +165,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    exploring_start_control_main()

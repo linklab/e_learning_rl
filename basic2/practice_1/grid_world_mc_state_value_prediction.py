@@ -100,7 +100,7 @@ def every_visit_mc_prediction(env, gamma, num_iter):
     return state_values, returns
 
 
-def main():
+def state_prediction_main():
     # 이미지 저장 경로 확인 및 생성
     if not os.path.exists('images/'):
         os.makedirs('images/')
@@ -146,4 +146,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    state_prediction_main()

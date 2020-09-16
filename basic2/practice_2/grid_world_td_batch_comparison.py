@@ -155,7 +155,7 @@ def mc_td_batch_comparison(env, alpha):
     plt.close()
 
 
-if __name__ == '__main__':
+def td_batch_comparison_main():
     env = GridWorld(
         height=GRID_HEIGHT,
         width=GRID_WIDTH,
@@ -170,3 +170,7 @@ if __name__ == '__main__':
 
     print("alpha={0}".format(0.005))
     mc_td_batch_comparison(env, alpha=0.005)
+
+
+if __name__ == '__main__':
+    td_batch_comparison_main()

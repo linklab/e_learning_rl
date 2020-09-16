@@ -120,7 +120,7 @@ def generate_soft_greedy_policy(env, state_action_values, policy):
     return new_policy, error
 
 
-def main():
+def soft_policy_control_main():
     # 그리드 월드 환경 객체 생성
     env = GridWorld(
         height=GRID_HEIGHT,
@@ -164,4 +164,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    soft_policy_control_main()

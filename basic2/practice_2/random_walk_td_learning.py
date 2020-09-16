@@ -1,7 +1,6 @@
 # 사용 패키지 임포트
 import numpy as np
 from basic.practice_1.randomwalk import RandomWalk
-from utils.util import draw_random_walk_policy_image
 import matplotlib.pyplot as plt
 import os
 
@@ -83,7 +82,7 @@ def compute_state_values(env):
     plt.close()
 
 
-def main():
+def td_learning_main():
     # 이미지 저장 경로 확인 및 생성
     if not os.path.exists('images/'):
         os.makedirs('images/')
@@ -98,4 +97,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    td_learning_main()

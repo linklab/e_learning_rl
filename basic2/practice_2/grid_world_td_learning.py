@@ -95,7 +95,7 @@ def compute_state_values(env, alpha):
     )
 
 
-if __name__ == '__main__':
+def td_learning_main():
     env = GridWorld(
         height=GRID_HEIGHT,
         width=GRID_WIDTH,
@@ -106,3 +106,7 @@ if __name__ == '__main__':
         outward_reward=-1.0
     )
     compute_state_values(env, alpha=0.05)
+
+
+if __name__ == '__main__':
+    td_learning_main()

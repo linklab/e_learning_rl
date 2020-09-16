@@ -54,6 +54,7 @@ def draw_grid_world_state_values_image(state_values, filename, GRID_HEIGHT, GRID
     plt.savefig(filename)
     plt.close()
 
+
 # 학습 이후의 행동가치함수를 표 형태로 그리는 함수
 def draw_grid_world_action_values_image(action_values, filename, GRID_HEIGHT, GRID_WIDTH, NUM_ACTIONS, ACTION_SYMBOLS):
     action_str_values = []
@@ -144,6 +145,7 @@ def draw_grid_world_optimal_policy_image(policy, filename, GRID_HEIGHT, GRID_WID
     plt.close()
 
 
+# 그리드월드 정책 이미지 산출 함수
 def draw_grid_world_policy_image(policy, filename, GRID_HEIGHT, GRID_WIDTH, ACTION_SYMBOLS, TERMINAL_STATES=None):
     action_str_values = []
     for i in range(GRID_HEIGHT):

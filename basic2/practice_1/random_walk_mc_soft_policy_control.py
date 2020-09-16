@@ -112,7 +112,7 @@ def generate_soft_greedy_policy(env, state_action_values, policy):
     return new_policy, error
 
 
-def main():
+def random_walk_soft_policy_control_main():
     # 랜덤 워크 환경 객체 생성
     env = RandomWalk(
         num_internal_states=5,
@@ -148,4 +148,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    random_walk_soft_policy_control_main()
