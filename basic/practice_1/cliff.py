@@ -1,3 +1,4 @@
+import random
 import time
 
 
@@ -19,9 +20,6 @@ class CliffGridWorld():
 
         # 그리드월드의 가로 길이
         self.WIDTH = width
-
-        self.observation_space = gym.spaces.MultiDiscrete([self.HEIGHT, self.WIDTH])
-        self.action_space = gym.spaces.Discrete(4)
 
         self.STATES = []
         self.num_states = self.WIDTH * self.HEIGHT
@@ -185,6 +183,10 @@ class CliffGridWorld():
     def render(self, mode='human'):
         print(self.__str__())
 
+    # 임의의 행동을 선택하여 반환
+    def get_random_action(self):
+        return random.choice(self.ACTIONS)
+
     def __str__(self):
         gridworld_str = ""
         for i in range(self.HEIGHT):
@@ -241,7 +243,7 @@ def main_cliff_gridworld():
     total_steps = 0
     while not done:
         total_steps += 1
-        action = env.sample()
+        action = env.get_random_action()
         next_state, reward, done, _ = env.step(action)
         print("action: {0}, reward: {1}, done: {2}, total_steps: {3}".format(
             env.ACTION_SYMBOLS[action],

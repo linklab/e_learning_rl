@@ -32,7 +32,7 @@ def q_learning_for_agent_1_vs_dummy():
         state = env.reset()
 
         epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
-        #epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon_stretched_exponential_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
 
         if BOARD_RENDER:
             env.render()
@@ -113,7 +113,7 @@ def q_learning_for_dummy_vs_agent_2():
         current_agent = agent_1
 
         epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
-        #epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon = epsilon_stretched_exponential_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
 
         if BOARD_RENDER:
             env.render()
@@ -193,11 +193,11 @@ def q_learning_for_self_play():
 
     env = TicTacToe()
 
-    agent_1 = Q_Learning_Agent(name="AGENT_1", env=env)
-    agent_2 = Q_Learning_Agent(name="AGENT_2", env=env)
+    self_agent_1 = Q_Learning_Agent(name="AGENT_1", env=env)
+    self_agent_2 = Q_Learning_Agent(name="AGENT_2", env=env)
 
-    agent_2.q_table = agent_1.q_table
-    agent_2.policy = agent_1.policy
+    self_agent_2.q_table = self_agent_1.q_table
+    self_agent_2.policy = self_agent_1.policy
 
     total_steps = 0
 
@@ -205,7 +205,7 @@ def q_learning_for_self_play():
         state = env.reset()
 
         epsilon = epsilon_scheduled(episode, LAST_SCHEDULED_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
-        #epsilon = epsilon_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
+        #epsilon = epsilon_stretched_exponential_scheduled(episode, MAX_EPISODES, INITIAL_EPSILON, FINAL_EPSILON)
 
         if BOARD_RENDER:
             env.render()
@@ -218,29 +218,29 @@ def q_learning_for_self_play():
         while not done:
             total_steps += 1
 
-            # agent_1 스텝 수행
-            action = agent_1.get_action(state)
+            # self_agent_1 스텝 수행
+            action = self_agent_1.get_action(state)
             next_state, reward, done, info = env.step(action)
             print_step_status(
-                agent_1, state, action, next_state, reward, done, info, env, STEP_VERBOSE, BOARD_RENDER
+                self_agent_1, state, action, next_state, reward, done, info, env, STEP_VERBOSE, BOARD_RENDER
             )
 
             if done:
                 # 게임 완료 및 게임 승패 관련 통계 정보 출력
                 print_game_statistics(
-                    info, episode, epsilon, total_steps, game_status, agent_1, agent_2
+                    info, episode, epsilon, total_steps, game_status, self_agent_1, self_agent_2
                 )
 
                 # reward: agent_1가 착수하여 done=True ==> agent_1이 이기면 1.0, 비기면 0.0
-                agent_1_episode_td_error += agent_1.q_learning(state, action, None, reward, done, epsilon)
+                agent_1_episode_td_error += self_agent_1.q_learning(state, action, None, reward, done, epsilon)
 
                 # 미루워 두었던 agent_2의 배치에 transition 정보 추가
                 if STATE_2 is not None and ACTION_2 is not None:
-                    agent_2_episode_td_error += agent_2.q_learning(STATE_2, ACTION_2, None, -1.0 * reward, done, epsilon)
+                    agent_2_episode_td_error += self_agent_2.q_learning(STATE_2, ACTION_2, None, -1.0 * reward, done, epsilon)
             else:
                 # 미루워 두었던 agent_2의 배치에 transition 정보 추가
                 if STATE_2 is not None and ACTION_2 is not None:
-                    agent_2_episode_td_error += agent_2.q_learning(STATE_2, ACTION_2, next_state, reward, done, epsilon)
+                    agent_2_episode_td_error += self_agent_2.q_learning(STATE_2, ACTION_2, next_state, reward, done, epsilon)
 
                 # agent_1이 방문한 현재 상태 및 수행한 행동 정보를 저장해 두었다가 추후 활용
                 STATE_1 = state
@@ -248,50 +248,50 @@ def q_learning_for_self_play():
 
                 # agent_2 스텝 수행
                 state = next_state
-                action = agent_2.get_action(state)
+                action = self_agent_2.get_action(state)
                 next_state, reward, done, info = env.step(action)
                 print_step_status(
-                    agent_2, state, action, next_state, reward, done, info, env, STEP_VERBOSE, BOARD_RENDER
+                    self_agent_2, state, action, next_state, reward, done, info, env, STEP_VERBOSE, BOARD_RENDER
                 )
 
                 if done:
                     # 게임 완료 및 게임 승패 관련 통계 정보 출력
                     print_game_statistics(
-                        info, episode, epsilon, total_steps, game_status, agent_1, agent_2
+                        info, episode, epsilon, total_steps, game_status, self_agent_1, self_agent_2
                     )
 
                     # reward: agent_2가 착수하여 done=True ==> agent_2가 이기면 -1.0, 비기면 0.0
-                    agent_2_episode_td_error += agent_2.q_learning(state, action, None, -1.0 * reward, done, epsilon)
+                    agent_2_episode_td_error += self_agent_2.q_learning(state, action, None, -1.0 * reward, done, epsilon)
 
                     # 미루워 두었던 agent_1의 배치에 transition 정보 추가
-                    agent_1_episode_td_error += agent_1.q_learning(STATE_1, ACTION_1, None, reward, done, epsilon)
+                    agent_1_episode_td_error += self_agent_1.q_learning(STATE_1, ACTION_1, None, reward, done, epsilon)
                 else:
                     # agent_2이 방문한 현재 상태 및 수행한 행동 정보를 저장해 두었다가 추후 활용
                     STATE_2 = state
                     ACTION_2 = action
 
                     # 미루워 두었던 agent_1의 배치에 transition 정보 추가
-                    agent_1_episode_td_error += agent_1.q_learning(STATE_1, ACTION_1, next_state, reward, done, epsilon)
+                    agent_1_episode_td_error += self_agent_1.q_learning(STATE_1, ACTION_1, next_state, reward, done, epsilon)
 
             state = next_state
 
         game_status.set_agent_1_episode_td_error(agent_1_episode_td_error)
         game_status.set_agent_2_episode_td_error(agent_2_episode_td_error)
 
-    game_status.agent_1_count_state_updates = agent_1.count_state_updates
-    game_status.agent_2_count_state_updates = agent_2.count_state_updates
+    game_status.agent_1_count_state_updates = self_agent_1.count_state_updates
+    game_status.agent_2_count_state_updates = self_agent_2.count_state_updates
     draw_performance(game_status, "q_learning_for_self_play.png", MAX_EPISODES)
 
     # 훈련 종료 직후 완전 탐욕적으로 정책 설정
     # agent_1과 agent_2는 동일한 에이전트이므로 agent_1에 대해서만 정책 설정
-    agent_1.make_greedy_policy()
+    self_agent_1.make_greedy_policy()
 
     # 학습 완료된 에이전트가 보유하고 있는 Q Table과 Policy 저장
     # agent_1과 agent_2는 동일한 에이전트이므로 agent_1에 대해서만 Q Table과 Policy 저장
     with open(os.path.join('models', 'self_agent.bin'), 'wb') as f:
         q_table_and_policy = {
-            'q_table': agent_1.q_table,
-            'policy': agent_1.policy
+            'q_table': self_agent_1.q_table,
+            'policy': self_agent_1.policy
         }
         pickle.dump(q_table_and_policy, f)
 

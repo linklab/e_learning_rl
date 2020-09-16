@@ -81,7 +81,7 @@ def temporal_difference(env, policy, state_values, alpha, gamma=1.0):
         state = next_state
 
 
-# @values: 현재의 상태 가치
+# @state_values: 현재의 상태 가치
 # @alpha: 스텝 사이즈
 # @batch: 배치 업데이트 유무
 def temporal_difference_batch(env, policy, state_values, alpha=0.1, gamma=1.0, num_batch_updates=10):

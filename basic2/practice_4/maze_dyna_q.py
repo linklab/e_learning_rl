@@ -151,6 +151,7 @@ def maze_dyna_q(env):
     performance_steps = np.zeros((len(planning_repeats), MAX_EPISODES))
 
     for run in range(TOTAL_RUNS):
+        print("RUN: {0}".format(run))
         for i, planning_repeat in enumerate(planning_repeats):
             # 행동 가치 저장
             q_table = generate_initial_q_value(env)
@@ -178,7 +179,7 @@ def maze_dyna_q(env):
     plt.close()
 
 
-if __name__ == '__main__':
+def maze_dyna_q_main():
     # 이미지 저장 경로 확인 및 생성
     if not os.path.exists('images/'):
         os.makedirs('images/')
@@ -188,3 +189,7 @@ if __name__ == '__main__':
     print(env)
 
     maze_dyna_q(env)
+
+
+if __name__ == '__main__':
+    maze_dyna_q_main()
