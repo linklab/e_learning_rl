@@ -9,7 +9,7 @@ from utils.util import draw_grid_world_state_values_image
 GRID_HEIGHT = 5
 GRID_WIDTH = 5
 
-DISCOUNT_RATE = 0.9      # 감쇄율
+DISCOUNT_RATE = 0.9         # 감쇄율
 
 A_POSITION = (0, 1)         # 임의로 지정한 특별한 상태 A 좌표
 B_POSITION = (0, 3)         # 임의로 지정한 특별한 상태 B 좌표
@@ -24,6 +24,11 @@ def calculate_grid_world_optimal_state_values(env):
 
     # 가치 함수의 값들이 수렴할 때까지 반복
     while True:
+
+        with np.printoptions(precision=2, suppress=True):
+            print(value_function)
+            print()
+
         # value_function과 동일한 형태를 가지면서 값은 모두 0인 배열을 new_value_function에 저장
         new_value_function = np.zeros_like(value_function)
 
@@ -32,11 +37,13 @@ def calculate_grid_world_optimal_state_values(env):
                 values = []
                 # 주어진 상태에서 가능한 모든 행동들의 결과로 다음 상태 및 보상 정보 갱신
                 for action in env.ACTIONS:
-                    (next_i, next_j), reward, prob = env.get_state_action_probability(state=(i, j), action=action)
+                    (next_i, next_j), reward, transition_prob = env.get_state_action_probability(
+                        state=(i, j), action=action
+                    )
 
                     # Bellman Optimality Equation, 벨만 최적 방정식 적용
                     values.append(
-                        prob * (reward + DISCOUNT_RATE * value_function[next_i, next_j])
+                        transition_prob * (reward + DISCOUNT_RATE * value_function[next_i, next_j])
                     )
 
                 # 새롭게 계산된 상태 가치 중 최대 상태 가치로 현재 상태의 가치 갱신
@@ -58,7 +65,7 @@ def main():
         width=GRID_WIDTH,
         start_state=None,
         terminal_states=[],
-        transition_reward=0,
+        transition_reward=0.0,
         outward_reward=-1.0,
         warm_hole_states=[(A_POSITION, A_PRIME_POSITION, 10.0), (B_POSITION, B_PRIME_POSITION, 5.0)]
     )

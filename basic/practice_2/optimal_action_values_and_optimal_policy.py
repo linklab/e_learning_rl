@@ -8,7 +8,7 @@ from utils.util import draw_grid_world_action_values_image, draw_grid_world_opti
 
 GRID_HEIGHT = 5
 GRID_WIDTH = 5
-DISCOUNT_RATE = 0.9      # 감쇄율
+DISCOUNT_RATE = 0.9         # 감쇄율
 
 A_POSITION = (0, 1)         # 임의로 지정한 특별한 상태 A 좌표
 B_POSITION = (0, 3)         # 임의로 지정한 특별한 상태 B 좌표
@@ -30,12 +30,14 @@ def calculate_grid_world_optimal_action_values(env):
             for j in range(GRID_WIDTH):
                 # 주어진 상태에서 가능한 모든 행동들의 결과로 다음 상태 및 보상 정보 갱신
                 for action in env.ACTIONS:
-                    (next_i, next_j), reward, prob = env.get_state_action_probability(state=(i, j), action=action)
+                    (next_i, next_j), reward, transition_prob = env.get_state_action_probability(
+                        state=(i, j), action=action
+                    )
 
                     # Bellman Optimality Equation, 벨만 최적 방정식 적용
                     # 새로운 행동 가치 갱신
                     new_action_value_function[i, j, action] = \
-                        prob * (reward + DISCOUNT_RATE * np.max(action_value_function[next_i, next_j, :]))
+                        transition_prob * (reward + DISCOUNT_RATE * np.max(action_value_function[next_i, next_j, :]))
 
         # 행동 가치 테이블 수렴 여부 판단
         if np.sum(np.abs(new_action_value_function - action_value_function)) < 1e-4:
@@ -50,8 +52,10 @@ def calculate_optimal_policy(optimal_action_value):
     optimal_policy = dict()
     for i in range(GRID_HEIGHT):
         for j in range(GRID_WIDTH):
-            indices = [idx for idx, value_ in enumerate(optimal_action_value[i, j, :]) if
-                       value_ == np.max(optimal_action_value[i, j, :])]
+            indices = [
+                idx for idx, value_ in enumerate(optimal_action_value[i, j, :])
+                if value_ == np.max(optimal_action_value[i, j, :])
+            ]
             optimal_policy[(i, j)] = indices
 
     return optimal_policy
@@ -64,7 +68,7 @@ def main():
         width=GRID_WIDTH,
         start_state=None,
         terminal_states=[],
-        transition_reward=0,
+        transition_reward=0.0,
         outward_reward=-1.0,
         warm_hole_states=[(A_POSITION, A_PRIME_POSITION, 10.0), (B_POSITION, B_PRIME_POSITION, 5.0)]
     )
@@ -79,15 +83,22 @@ def main():
         env.ACTION_SYMBOLS
     )
 
+    with np.printoptions(precision=2, suppress=True):
+        print(optimal_action_values)
+
     print()
 
     optimal_policy = calculate_optimal_policy(optimal_action_values)
+
     draw_grid_world_optimal_policy_image(
         optimal_policy,
         "images/grid_world_optimal_policy.png",
         GRID_HEIGHT, GRID_WIDTH,
         env.ACTION_SYMBOLS
     )
+
+    with np.printoptions(precision=2, suppress=True):
+        print(optimal_policy)
 
 
 # MAIN

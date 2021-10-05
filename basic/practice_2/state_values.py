@@ -25,6 +25,11 @@ def calculate_grid_world_state_values(env):
 
     # 가치 함수의 값들이 수렴할 때까지 반복
     while True:
+
+        with np.printoptions(precision=2, suppress=True):
+            print(value_function)
+            print()
+
         # value_function과 동일한 형태를 가지면서 값은 모두 0인 배열을 new_value_function에 저장
         new_value_function = np.zeros_like(value_function)
 
@@ -34,8 +39,7 @@ def calculate_grid_world_state_values(env):
                 # 주어진 상태에서 가능한 모든 행동들의 결과로 다음 상태들을 갱신
                 for action in env.ACTIONS:
                     (next_i, next_j), reward, transition_prob = env.get_state_action_probability(
-                        state=(i, j),
-                        action=action
+                        state=(i, j), action=action
                     )
 
                     # Bellman-Equation, 벨만 방정식 적용

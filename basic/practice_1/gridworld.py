@@ -18,7 +18,7 @@ class GridWorld():
             terminal_states=[(4, 4)], # 종료 상태
             transition_reward=0.0,    # 일반적인 상태 전이 보상
             terminal_reward=1.0,      # 종료 상태로 이동하는 행동 수행 시 받는 보상
-            outward_reward=0.0,      # 미로 바깥으로 이동하는 행동 수행 시 받는 보상 (이동하지 않고 제자리 유지)
+            outward_reward=0.0,       # 미로 바깥으로 이동하는 행동 수행 시 받는 보상 (이동하지 않고 제자리 유지)
             warm_hole_states=None     # 윔홀 정의
     ):
         self.__version__ = "0.0.1"

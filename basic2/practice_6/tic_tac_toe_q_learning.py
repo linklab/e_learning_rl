@@ -4,7 +4,7 @@ import pickle
 from basic2.practice_5.tic_tac_toe import TicTacToe
 from basic2.practice_5.tic_tac_toe_dummy_agents import Dummy_Agent
 from basic2.practice_6.tic_tac_toe_agents import Q_Learning_Agent
-from basic2.practice_6.tic_tac_toe_utils import GameStatus, epsilon_scheduled
+from basic2.practice_6.tic_tac_toe_utils import GameStatus, epsilon_scheduled, draw_full_performance
 from basic2.practice_6.tic_tac_toe_utils import print_step_status, print_game_statistics, draw_performance
 
 INITIAL_EPSILON = 1.0
@@ -82,7 +82,8 @@ def q_learning_for_agent_1_vs_dummy():
         game_status.set_agent_1_episode_td_error(agent_1_episode_td_error)
 
     game_status.agent_1_count_state_updates = agent_1.count_state_updates
-    draw_performance(game_status, 'q_learning_for_agent_1_vs_dummy.png', MAX_EPISODES)
+    #draw_performance(game_status, 'q_learning_for_agent_1_vs_dummy.png', MAX_EPISODES)
+    draw_full_performance(game_status, 'q_learning_for_agent_1_vs_dummy.png', MAX_EPISODES)
 
     # 훈련 종료 직후 완전 탐욕적으로 정책 설정
     agent_1.make_greedy_policy()
@@ -173,7 +174,8 @@ def q_learning_for_dummy_vs_agent_2():
         game_status.set_agent_2_episode_td_error(agent_2_episode_td_error)
 
     game_status.agent_2_count_state_updates = agent_2.count_state_updates
-    draw_performance(game_status, 'q_learning_for_dummy_vs_agent_2.png', MAX_EPISODES)
+    #draw_performance(game_status, 'q_learning_for_dummy_vs_agent_2.png', MAX_EPISODES)
+    draw_full_performance(game_status, 'q_learning_for_dummy_vs_agent_2.png', MAX_EPISODES)
 
     # 훈련 종료 직후 완전 탐욕적으로 정책 설정
     agent_2.make_greedy_policy()
@@ -280,7 +282,8 @@ def q_learning_for_self_play():
 
     game_status.agent_1_count_state_updates = self_agent_1.count_state_updates
     game_status.agent_2_count_state_updates = self_agent_2.count_state_updates
-    draw_performance(game_status, "q_learning_for_self_play.png", MAX_EPISODES)
+    #draw_performance(game_status, "q_learning_for_self_play.png", MAX_EPISODES)
+    draw_full_performance(game_status, "q_learning_for_self_play.png", MAX_EPISODES)
 
     # 훈련 종료 직후 완전 탐욕적으로 정책 설정
     # agent_1과 agent_2는 동일한 에이전트이므로 agent_1에 대해서만 정책 설정
