@@ -35,12 +35,6 @@ class PolicyIteration:
                     else:
                         self.policy[i][j][action] = 0.25
 
-        # 정책 평가
-        self.delta = 0.0
-
-        # 정책 평가의 역
-        self.theta = 0.001
-
     # 정책 평가 함수
     def policy_evaluation(self):
         # 상태-가치 함수 초기화
